@@ -72,16 +72,25 @@ const getWeatherData = async () => {
     } else {
       // 获取 Adcode
       const adCode = await getAdcode(mainKey);
-      console.log(adCode);
-      if (adCode.infocode !== "10000") {
-        throw "地区查询失败";
-      }
-      weatherData.adCode = {
+      console.log("adcode输出: ", adCode);
+
+      if (!adCode.adcode || adCode.adcode.length === 0) {
+        // 本地开发或IP定位失败，手动指定一个adcode
+        weatherData.adCode = {
+          city: "深圳",
+          adcode: "440300"
+        };
+      } 
+      else  {
+        weatherData.adCode = {
         city: adCode.city,
         adcode: adCode.adcode,
-      };
+        };
+      }
+      
       // 获取天气信息
       const result = await getWeather(mainKey, weatherData.adCode.adcode);
+      console.log('天气API返回：', result);
       weatherData.weather = {
         weather: result.lives[0].weather,
         temperature: result.lives[0].temperature,
