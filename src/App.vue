@@ -14,9 +14,40 @@
       <!-- 太空欢迎页面 -->
       <div v-if="!showMainPage" class="space-welcome">
         <div class="space-content">
-          <h1 class="space-title">欢迎来到太空</h1>
-          <p class="space-subtitle">向下滚动开始探索</p>
+          <div class="space-header">
+            <h1 class="space-title">欢迎来到太空</h1>
+            <div class="astronaut">👨‍🚀</div>
+            <div class="planet-icon">🌌</div>
+          </div>
+          
+
+          
+          <div class="space-mission">
+            <p class="mission-text">准备开始你的太空之旅了吗？</p>
+            <div class="space-elements">
+              <span class="space-element">🚀</span>
+              <span class="space-element">⭐</span>
+              <span class="space-element">🌍</span>
+              <span class="space-element">🌙</span>
+            </div>
+            <div class="mission-stats">
+              <div class="stat-item">
+                <span class="stat-number">∞</span>
+                <span class="stat-label">可爱</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">活力</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">幸福</span>
+              </div>
+            </div>
+          </div>
+          
           <div class="scroll-hint">
+            <div class="scroll-text">向下滚动开始探索</div>
             <div class="scroll-arrow"></div>
           </div>
         </div>
@@ -232,31 +263,153 @@ onBeforeUnmount(() => {
 
 .space-content {
   position: fixed;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   color: white;
   z-index: 11;
+  max-width: 800px;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
   
-  .space-title {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    font-family: "UnidreamLED", sans-serif;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+  .space-header {
+    margin-bottom: 3rem;
+    animation: fadeInDown 1s ease-out;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .astronaut {
+      font-size: 2.5rem;
+      margin-bottom: 0.8rem;
+      animation: astronautFloat 4s ease-in-out infinite;
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+      opacity: 0.9;
+    }
+    
+    .planet-icon {
+      font-size: 3.2rem;
+      margin-bottom: 1.2rem;
+      animation: float 3s ease-in-out infinite;
+      display: block;
+      opacity: 0.85;
+    }
+    
+    .space-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      margin-top: -2rem;
+      font-family: "UnidreamLED", sans-serif;
+      text-shadow: 0 0 20px rgba(255,255,255,0.5);
+      background: linear-gradient(45deg, #fff, #87CEEB, #fff);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+    
+    .space-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: #ccc;
+      opacity: 0.9;
+    }
   }
   
-  .space-subtitle {
-    font-size: 1.2rem;
-    color: #ccc;
-    margin-bottom: 2rem;
+
+  
+  .space-mission {
+    margin-bottom: 3rem;
+    animation: fadeInUp 1s ease-out 0.5s both;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .mission-text {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: #ccc;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    
+    .space-elements {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      width: 100%;
+      
+      .space-element {
+        font-size: 1.5rem;
+        animation: elementFloat 3s ease-in-out infinite;
+        opacity: 0.8;
+        
+        &:nth-child(1) { animation-delay: 0s; }
+        &:nth-child(2) { animation-delay: 0.5s; }
+        &:nth-child(3) { animation-delay: 1s; }
+        &:nth-child(4) { animation-delay: 1.5s; }
+      }
+    }
+    
+    .mission-stats {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      width: 100%;
+      
+      .stat-item {
+        text-align: center;
+        padding: 1rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-number {
+          font-size: 2rem;
+          font-weight: bold;
+          color: #fff;
+          display: block;
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .stat-label {
+          font-size: 0.8rem;
+          color: #ccc;
+          display: block;
+          margin-top: 0.5rem;
+        }
+      }
+    }
   }
   
   .scroll-hint {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    animation: fadeInUp 1s ease-out 1s both;
+    
+    .scroll-text {
+      font-size: 1.1rem;
+      color: #ccc;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
     
     .scroll-arrow {
       width: 30px;
@@ -265,6 +418,7 @@ onBeforeUnmount(() => {
       border-bottom: 2px solid #fff;
       transform: rotate(45deg);
       animation: bounce 2s infinite;
+      opacity: 0.7;
     }
   }
 }
@@ -278,6 +432,136 @@ onBeforeUnmount(() => {
   0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
   40% { transform: translateY(-10px) rotate(45deg); }
   60% { transform: translateY(-5px) rotate(45deg); }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes astronautFloat {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  25% { 
+    transform: translateY(-15px) rotate(5deg); 
+  }
+  50% { 
+    transform: translateY(-25px) rotate(0deg); 
+  }
+  75% { 
+    transform: translateY(-15px) rotate(-5deg); 
+  }
+}
+
+@keyframes elementFloat {
+  0%, 100% { 
+    transform: translateY(0px) scale(1); 
+  }
+  50% { 
+    transform: translateY(-8px) scale(1.1); 
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .space-content {
+    padding: 0 1rem;
+    
+    .space-header {
+      .astronaut {
+        font-size: 2.5rem;
+      }
+      
+      .planet-icon {
+        font-size: 3rem;
+      }
+      
+      .space-title {
+        font-size: 2rem;
+      }
+      
+      .space-subtitle {
+        font-size: 1rem;
+      }
+    }
+    
+    .space-features {
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      .feature-item {
+        padding: 0.5rem;
+        
+        .feature-icon {
+          font-size: 2rem;
+        }
+        
+        .feature-text {
+          font-size: 0.8rem;
+        }
+      }
+    }
+    
+    .space-mission {
+      .space-elements {
+        gap: 0.5rem;
+        
+        .space-element {
+          font-size: 1.2rem;
+        }
+      }
+      
+      .mission-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+        
+        .stat-item {
+          padding: 0.5rem;
+          
+          .stat-number {
+            font-size: 1.5rem;
+          }
+          
+          .stat-label {
+            font-size: 0.7rem;
+          }
+        }
+      }
+    }
+  }
 }
 
 // 主内容页面
