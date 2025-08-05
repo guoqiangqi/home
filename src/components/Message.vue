@@ -155,6 +155,9 @@ watch(
           &:nth-of-type(1) {
             font-family: "Pacifico-Regular";
           }
+          &:nth-of-type(2) {
+            font-family: "Pacifico-Regular";
+          }
         }
       }
 
