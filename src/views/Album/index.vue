@@ -725,6 +725,7 @@ onMounted(() => {
   :deep(.el-dialog) {
     background: rgba(0, 0, 0, 0.95);
     border-radius: 16px;
+    margin-top: 5vh !important;
     
     .el-dialog__header {
       color: white;
@@ -733,12 +734,17 @@ onMounted(() => {
     
     .el-dialog__body {
       padding: 0;
+      max-height: 85vh;
+      overflow-y: auto;
     }
   }
 }
 
 .photo-viewer-content {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   
   .viewer-close-btn {
     position: absolute;
@@ -778,6 +784,10 @@ onMounted(() => {
     margin-bottom: 15px;
     padding: 0 20px;
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 75vh;
     
     .viewer-image {
       max-width: 100%;
@@ -786,6 +796,7 @@ onMounted(() => {
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       transition: transform 0.3s ease;
+      margin-top: 0;
       
       &:hover {
         transform: scale(1.02);
@@ -996,6 +1007,7 @@ onMounted(() => {
   
   .photo-viewer-image {
     padding: 0 15px;
+    min-height: 60vh;
     
     .viewer-image {
       max-height: 60vh;
