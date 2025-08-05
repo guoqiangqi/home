@@ -47,13 +47,16 @@
       <!-- 主内容页面 -->
       <div v-else class="main-page" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
         <div class="container" v-show="!store.backgroundShow">
-          <section class="all" v-show="!store.setOpenState">
+          <section class="all" v-show="!store.setOpenState && !store.albumOpenState">
             <MainLeft />
             <MainRight v-show="!store.boxOpenState" />
             <Box v-show="store.boxOpenState" />
           </section>
           <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
             <MoreSet />
+          </section>
+          <section class="album" v-show="store.albumOpenState" @click="store.albumOpenState = false">
+            <Album />
           </section>
         </div>
         
@@ -105,6 +108,7 @@ import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
+import Album from "@/views/Album/index.vue";
 import SpaceBackground from "@/components/SpaceBackground.vue";
 import WallpaperSelector from "@/components/WallpaperSelector.vue";
 import cursorInit from "@/utils/cursor.js";
@@ -159,6 +163,9 @@ const handleScroll = () => {
 
 // 鼠标滚轮事件
 const handleWheel = (event) => {
+  // 如果相册页面打开，不响应滚轮返回
+  if (store.albumOpenState) return;
+  
   if (showMainPage.value && window.scrollY <= 0 && event.deltaY < 0) {
     // 向上滚动且在主页面顶部时，返回太空页面
     showMainPage.value = false;
@@ -175,6 +182,9 @@ const handleTouchStart = (event) => {
 const handleTouchEnd = (event) => {
   touchEndY = event.changedTouches[0].clientY;
   const touchDiff = touchStartY - touchEndY;
+  
+  // 如果相册页面打开，不响应触摸返回
+  if (store.albumOpenState) return;
   
   // 向上滑动返回太空页面（滑动距离大于50px）
   if (touchDiff > 50 && showMainPage.value) {
@@ -718,6 +728,19 @@ onBeforeUnmount(() => {
       backdrop-filter: blur(20px);
       z-index: 2;
       animation: fade 0.5s;
+    }
+    
+    .album {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #00000080;
+      backdrop-filter: blur(20px);
+      z-index: 2;
+      animation: fade 0.5s;
+      overflow-y: auto;
     }
     
     @media (max-width: 1200px) {

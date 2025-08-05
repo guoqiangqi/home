@@ -79,6 +79,9 @@ const siteIcon = {
 const jumpLink = (data) => {
   if (data.name === "音乐" && store.musicClick) {
     if (typeof $openList === "function") $openList();
+  } else if (data.name === "相册") {
+    // 打开内部相册页面
+    store.albumOpenState = true;
   } else {
     window.open(data.link, "_blank");
   }
