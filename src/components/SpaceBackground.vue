@@ -23,7 +23,7 @@
     <div class="planets">
       <div class="planet planet-1">🌍</div>
       <div class="planet planet-2">🌙</div>
-      <div class="planet planet-3">🪐</div>
+      <div class="planet planet-sun">☀️</div>
     </div>
     
     <!-- 星云效果 -->
@@ -186,21 +186,24 @@
 }
 
 .planet-1 {
-  top: 15%;
+  top: 70%;
   right: 10%;
   animation-delay: 0s;
 }
 
 .planet-2 {
-  top: 70%;
-  left: 5%;
+  top: 15%;
+  right: 10%;
   animation-delay: 2s;
 }
 
-.planet-3 {
-  top: 30%;
-  left: 15%;
-  animation-delay: 4s;
+.planet-sun {
+  top: 5%;
+  left: 5%;
+  font-size: 2rem;
+  opacity: 0.8;
+  animation: sunGlow 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.6));
 }
 
 // 星云效果
@@ -373,6 +376,17 @@
   50% { transform: translateY(-20px); }
 }
 
+@keyframes sunGlow {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.6));
+  }
+  50% { 
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0.8));
+  }
+}
+
 @keyframes nebulaFloat {
   0%, 100% { 
     transform: translateX(0) translateY(0) scale(1);
@@ -388,6 +402,10 @@
 @media (max-width: 768px) {
   .planet {
     font-size: 1.5rem;
+  }
+  
+  .planet-sun {
+    font-size: 1.8rem;
   }
   
   .nebula-1 {

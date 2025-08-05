@@ -15,40 +15,29 @@
       <div v-if="!showMainPage" class="space-welcome">
         <div class="space-content">
           <div class="space-header">
-            <h1 class="space-title">欢迎来到太空</h1>
+            <h1 class="space-title">你好呀，欢迎来到我的乐园<span class="clap-icon" title="鼓掌">👏</span></h1>
             <div class="astronaut">👨‍🚀</div>
-            <div class="planet-icon">🌌</div>
           </div>
           
 
           
           <div class="space-mission">
-            <p class="mission-text">准备开始你的太空之旅了吗？</p>
             <div class="space-elements">
               <span class="space-element">🚀</span>
-              <span class="space-element">⭐</span>
-              <span class="space-element">🌍</span>
-              <span class="space-element">🌙</span>
-            </div>
-            <div class="mission-stats">
-              <div class="stat-item">
-                <span class="stat-number">∞</span>
-                <span class="stat-label">可爱</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number">24/7</span>
-                <span class="stat-label">活力</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-number">100%</span>
-                <span class="stat-label">幸福</span>
-              </div>
+              <span class="space-element">🛸</span>
+              <span class="space-element">🛰️</span>
+              <span class="space-element">☄️</span>
+              <span class="space-element">🌌</span>
             </div>
           </div>
           
           <div class="scroll-hint">
             <div class="scroll-text">向下滚动开始探索</div>
-            <div class="scroll-arrow"></div>
+            <div class="scroll-arrow-container">
+              <div class="scroll-arrow"></div>
+              <div class="scroll-arrow scroll-arrow-2"></div>
+              <div class="scroll-arrow scroll-arrow-3"></div>
+            </div>
           </div>
         </div>
         <!-- 滚动区域 -->
@@ -261,22 +250,22 @@ onBeforeUnmount(() => {
   z-index: 10;
 }
 
-.space-content {
-  position: fixed;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  z-index: 11;
-  max-width: 800px;
-  width: 100%;
-  padding: 0 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
+  .space-content {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 11;
+    max-width: 800px;
+    width: 100%;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
   
   .space-header {
     margin-bottom: 3rem;
@@ -289,32 +278,37 @@ onBeforeUnmount(() => {
     .astronaut {
       font-size: 2.5rem;
       margin-bottom: 0.8rem;
+      margin-top: 2rem;
       animation: astronautFloat 4s ease-in-out infinite;
       display: block;
       filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
       opacity: 0.9;
     }
     
-    .planet-icon {
-      font-size: 3.2rem;
-      margin-bottom: 1.2rem;
-      animation: float 3s ease-in-out infinite;
-      display: block;
-      opacity: 0.85;
-    }
+
     
     .space-title {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: bold;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
       margin-bottom: 1.5rem;
-      margin-top: -2rem;
-      font-family: "UnidreamLED", sans-serif;
+      margin-top: -10rem;
+      font-style: italic;
       text-shadow: 0 0 20px rgba(255,255,255,0.5);
       background: linear-gradient(45deg, #fff, #87CEEB, #fff);
       background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: gradientShift 3s ease-in-out infinite;
+      
+      .clap-icon {
+        display: inline-block;
+        font-size: 1.2em;
+        margin-left: 0.3em;
+        animation: clapAnimation 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+        -webkit-text-fill-color: initial;
+        background: none;
+        -webkit-background-clip: initial;
+      }
     }
     
     .space-subtitle {
@@ -327,75 +321,46 @@ onBeforeUnmount(() => {
 
   
   .space-mission {
-    margin-bottom: 3rem;
+    margin-bottom: 18rem;
     animation: fadeInUp 1s ease-out 0.5s both;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     
-    .mission-text {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      color: #ccc;
-      margin-bottom: 1.5rem;
-      font-style: italic;
-    }
+
     
     .space-elements {
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-      width: 100%;
-      
-      .space-element {
-        font-size: 1.5rem;
-        animation: elementFloat 3s ease-in-out infinite;
-        opacity: 0.8;
-        
-        &:nth-child(1) { animation-delay: 0s; }
-        &:nth-child(2) { animation-delay: 0.5s; }
-        &:nth-child(3) { animation-delay: 1s; }
-        &:nth-child(4) { animation-delay: 1.5s; }
-      }
-    }
-    
-    .mission-stats {
-      display: flex;
-      justify-content: center;
       flex-wrap: wrap;
       gap: 2rem;
+      margin-bottom: 2rem;
+      margin-top: 2rem;
       width: 100%;
+      max-width: 600px;
       
-      .stat-item {
-        text-align: center;
-        padding: 1rem;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
+      .space-element {
+        font-size: 2rem;
+        animation: elementFloat 4s ease-in-out infinite;
+        opacity: 0.9;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
         transition: all 0.3s ease;
         
         &:hover {
-          transform: scale(1.05);
-          background: rgba(255, 255, 255, 0.1);
+          transform: scale(1.2) rotate(5deg);
+          filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
         }
         
-        .stat-number {
-          font-size: 2rem;
-          font-weight: bold;
-          color: #fff;
-          display: block;
-          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        
-        .stat-label {
-          font-size: 0.8rem;
-          color: #ccc;
-          display: block;
-          margin-top: 0.5rem;
-        }
+        &:nth-child(1) { animation-delay: 0s; }
+        &:nth-child(2) { animation-delay: 0.8s; }
+        &:nth-child(3) { animation-delay: 1.6s; }
+        &:nth-child(4) { animation-delay: 2.4s; }
+        &:nth-child(5) { animation-delay: 3.2s; }
       }
     }
+    
+
   }
   
   .scroll-hint {
@@ -403,22 +368,57 @@ onBeforeUnmount(() => {
     flex-direction: column;
     align-items: center;
     animation: fadeInUp 1s ease-out 1s both;
+    position: relative;
     
     .scroll-text {
-      font-size: 1.1rem;
-      color: #ccc;
+      font-size: 1.2rem;
+      color: #fff;
+      margin-bottom: 9rem;
+      margin-top: -1rem;
+      opacity: 0.9;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+      letter-spacing: 1px;
+      animation: textGlow 2s ease-in-out infinite;
+    }
+    
+    .scroll-arrow-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 1rem;
-      opacity: 0.8;
+      margin-top: -7rem;
     }
     
     .scroll-arrow {
-      width: 30px;
-      height: 30px;
-      border-right: 2px solid #fff;
-      border-bottom: 2px solid #fff;
+      width: 20px;
+      height: 20px;
+      border-right: 3px solid #fff;
+      border-bottom: 3px solid #fff;
       transform: rotate(45deg);
       animation: bounce 2s infinite;
-      opacity: 0.7;
+      opacity: 0.8;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      
+      &.scroll-arrow-2 {
+        width: 16px;
+        height: 16px;
+        border-right: 2px solid #87CEEB;
+        border-bottom: 2px solid #87CEEB;
+        animation-delay: 0.3s;
+        opacity: 0.6;
+      }
+      
+      &.scroll-arrow-3 {
+        width: 12px;
+        height: 12px;
+        border-right: 2px solid #4A90E2;
+        border-bottom: 2px solid #4A90E2;
+        animation-delay: 0.6s;
+        opacity: 0.4;
+      }
     }
   }
 }
@@ -430,8 +430,19 @@ onBeforeUnmount(() => {
 
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
-  40% { transform: translateY(-10px) rotate(45deg); }
-  60% { transform: translateY(-5px) rotate(45deg); }
+  40% { transform: translateY(-15px) rotate(45deg); }
+  60% { transform: translateY(-8px) rotate(45deg); }
+}
+
+@keyframes textGlow {
+  0%, 100% { 
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(135, 206, 235, 0.5);
+    transform: scale(1.05);
+  }
 }
 
 @keyframes fadeInDown {
@@ -462,8 +473,14 @@ onBeforeUnmount(() => {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
 }
 
 @keyframes gradientShift {
@@ -488,10 +505,31 @@ onBeforeUnmount(() => {
 
 @keyframes elementFloat {
   0%, 100% { 
-    transform: translateY(0px) scale(1); 
+    transform: translateY(0px) scale(1) rotate(0deg); 
+  }
+  25% { 
+    transform: translateY(-12px) scale(1.15) rotate(2deg); 
   }
   50% { 
-    transform: translateY(-8px) scale(1.1); 
+    transform: translateY(-20px) scale(1.2) rotate(0deg); 
+  }
+  75% { 
+    transform: translateY(-12px) scale(1.15) rotate(-2deg); 
+  }
+}
+
+@keyframes clapAnimation {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg); 
+  }
+  25% { 
+    transform: scale(1.1) rotate(5deg); 
+  }
+  50% { 
+    transform: scale(1.2) rotate(0deg); 
+  }
+  75% { 
+    transform: scale(1.1) rotate(-5deg); 
   }
 }
 
@@ -503,14 +541,18 @@ onBeforeUnmount(() => {
     .space-header {
       .astronaut {
         font-size: 2.5rem;
+        margin-top: 1.5rem;
       }
       
-      .planet-icon {
-        font-size: 3rem;
-      }
+
       
       .space-title {
-        font-size: 2rem;
+        font-size: 1.2rem;
+        
+        .clap-icon {
+          font-size: 1.1em;
+          margin-left: 0.2em;
+        }
       }
       
       .space-subtitle {
@@ -536,30 +578,50 @@ onBeforeUnmount(() => {
     }
     
     .space-mission {
+      margin-bottom: 12rem;
+      
       .space-elements {
-        gap: 0.5rem;
+        gap: 1rem;
+        max-width: 400px;
+        margin-top: 1.5rem;
         
         .space-element {
-          font-size: 1.2rem;
+          font-size: 1.5rem;
         }
       }
       
-      .mission-stats {
-        flex-direction: column;
-        gap: 0.5rem;
+
+    }
+    
+    .scroll-hint {
+      .scroll-text {
+        font-size: 1rem;
+        margin-bottom: 3rem;
+        margin-top: -0.5rem;
+      }
+      
+      .scroll-arrow-container {
+        gap: 6px;
+        margin-bottom: 0.5rem;
+        margin-top: -4rem;
+      }
+      
+      .scroll-arrow {
+        width: 16px;
+        height: 16px;
         
-        .stat-item {
-          padding: 0.5rem;
-          
-          .stat-number {
-            font-size: 1.5rem;
-          }
-          
-          .stat-label {
-            font-size: 0.7rem;
-          }
+        &.scroll-arrow-2 {
+          width: 12px;
+          height: 12px;
+        }
+        
+        &.scroll-arrow-3 {
+          width: 8px;
+          height: 8px;
         }
       }
+      
+
     }
   }
 }
