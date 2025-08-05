@@ -410,15 +410,15 @@ onBeforeUnmount(() => {
     position: relative;
     
     .scroll-text {
-      font-size: 1.2rem;
-      color: #fff;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
       margin-bottom: 9rem;
       margin-top: -1rem;
-      opacity: 0.9;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      font-weight: 500;
-      letter-spacing: 1px;
-      animation: textGlow 2s ease-in-out infinite;
+      opacity: 0.65;
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+      font-weight: 420;
+      letter-spacing: 0.6px;
+      animation: textGlow 3s ease-in-out infinite;
     }
     
     .scroll-arrow-container {
@@ -432,29 +432,29 @@ onBeforeUnmount(() => {
     }
     
     .scroll-arrow {
-      width: 20px;
-      height: 20px;
-      border-right: 3px solid #fff;
-      border-bottom: 3px solid #fff;
+      width: 18px;
+      height: 18px;
+      border-right: 2.5px solid rgba(255, 255, 255, 0.7);
+      border-bottom: 2.5px solid rgba(255, 255, 255, 0.7);
       transform: rotate(45deg);
-      animation: bounce 2s infinite;
-      opacity: 0.8;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      animation: bounce 2.5s infinite;
+      opacity: 0.65;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
       
       &.scroll-arrow-2 {
-        width: 16px;
-        height: 16px;
-        border-right: 2px solid #87CEEB;
-        border-bottom: 2px solid #87CEEB;
+        width: 14px;
+        height: 14px;
+        border-right: 2px solid rgba(135, 206, 235, 0.6);
+        border-bottom: 2px solid rgba(135, 206, 235, 0.6);
         animation-delay: 0.3s;
-        opacity: 0.6;
+        opacity: 0.5;
       }
       
       &.scroll-arrow-3 {
-        width: 12px;
-        height: 12px;
-        border-right: 2px solid #4A90E2;
-        border-bottom: 2px solid #4A90E2;
+        width: 10px;
+        height: 10px;
+        border-right: 1.5px solid rgba(74, 144, 226, 0.5);
+        border-bottom: 1.5px solid rgba(74, 144, 226, 0.5);
         animation-delay: 0.6s;
         opacity: 0.4;
       }
@@ -469,18 +469,18 @@ onBeforeUnmount(() => {
 
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
-  40% { transform: translateY(-15px) rotate(45deg); }
-  60% { transform: translateY(-8px) rotate(45deg); }
+  40% { transform: translateY(-10px) rotate(45deg); }
+  60% { transform: translateY(-6px) rotate(45deg); }
 }
 
 @keyframes textGlow {
   0%, 100% { 
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
     transform: scale(1);
   }
   50% { 
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(135, 206, 235, 0.5);
-    transform: scale(1.05);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 16px rgba(135, 206, 235, 0.35);
+    transform: scale(1.02);
   }
 }
 
