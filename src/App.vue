@@ -6,7 +6,7 @@
   <Loading />
   
   <!-- 壁纸 -->
-  <Background @loadComplete="loadComplete" />
+  <Background ref="backgroundRef" @loadComplete="loadComplete" />
   
   <!-- 主界面 -->
   <Transition name="fade" mode="out-in">
@@ -101,6 +101,7 @@ import config from "@/../package.json";
 
 const store = mainStore();
 const showMainPage = ref(false);
+const backgroundRef = ref(null);
 
 // 页面宽度
 const getWidth = () => {
@@ -140,6 +141,8 @@ const handleScroll = () => {
   if (currentScrollY > 50 && !showMainPage.value) {
     showMainPage.value = true;
     window.scrollTo(0, 0);
+    // 进入主页面时自动切换背景
+    changeBackgroundOnPageEnter();
   }
 };
 
@@ -166,6 +169,24 @@ const handleTouchEnd = (event) => {
   if (touchDiff > 50 && showMainPage.value) {
     showMainPage.value = false;
     window.scrollTo(0, 0);
+  }
+};
+
+// 进入主页面时自动切换背景
+const changeBackgroundOnPageEnter = () => {
+  // 确保使用本地壁纸类型
+  store.coverType = "0";
+  
+  // 切换到下一个本地壁纸
+  if (backgroundRef.value) {
+    backgroundRef.value.nextLocalBackground();
+    
+    // 显示切换提示
+    ElMessage({
+      message: `已切换到壁纸 ${backgroundRef.value.currentLocalBgIndex}`,
+      grouping: true,
+      duration: 2000,
+    });
   }
 };
 
@@ -252,7 +273,7 @@ onBeforeUnmount(() => {
 
   .space-content {
     position: fixed;
-    top: 40%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -278,7 +299,7 @@ onBeforeUnmount(() => {
     .astronaut {
       font-size: 2.5rem;
       margin-bottom: 0.8rem;
-      margin-top: 2rem;
+      margin-top: 4rem;
       animation: astronautFloat 4s ease-in-out infinite;
       display: block;
       filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
@@ -290,7 +311,7 @@ onBeforeUnmount(() => {
     .space-title {
       font-size: clamp(1rem, 2.5vw, 1.3rem);
       margin-bottom: 1.5rem;
-      margin-top: -10rem;
+      margin-top: -16rem;
       font-style: italic;
       text-shadow: 0 0 20px rgba(255,255,255,0.5);
       background: linear-gradient(45deg, #fff, #87CEEB, #fff);
@@ -334,7 +355,7 @@ onBeforeUnmount(() => {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 2rem;
+      gap: 4rem;
       margin-bottom: 2rem;
       margin-top: 2rem;
       width: 100%;

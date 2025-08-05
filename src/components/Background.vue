@@ -24,22 +24,23 @@
 </template>
 
 <script setup>
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
+import { ElMessage } from 'element-plus';
 
 const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
 const emit = defineEmits(["loadComplete"]);
 
-// 壁纸随机数
-// 请依据文件夹内的图片个数修改 Math.random() 后面的第一个数字
-const bgRandom = Math.floor(Math.random() * 10 + 1);
+// 当前本地壁纸编号 (1-10)
+const currentLocalBgIndex = ref(1);
 
 // 更换壁纸链接
 const changeBg = (type) => {
   if (type == 0) {
-    bgUrl.value = `/images/background${bgRandom}.jpg`;
+    bgUrl.value = `/images/background${currentLocalBgIndex.value}.jpg`;
   } else if (type == 1) {
     bgUrl.value = "https://api.dujin.org/bing/1920.php";
   } else if (type == 2) {
@@ -76,7 +77,16 @@ const imgLoadError = () => {
       fill: "#efefef",
     }),
   });
-  bgUrl.value = `/images/background${bgRandom}.jpg`;
+  // 切换到下一个壁纸，避免无限循环
+  currentLocalBgIndex.value = (currentLocalBgIndex.value % 10) + 1;
+  bgUrl.value = `/images/background${currentLocalBgIndex.value}.jpg`;
+};
+
+// 切换到下一个本地壁纸
+const nextLocalBackground = () => {
+  const oldIndex = currentLocalBgIndex.value;
+  currentLocalBgIndex.value = (currentLocalBgIndex.value % 10) + 1;
+  console.log(`本地壁纸索引从 ${oldIndex} 切换到 ${currentLocalBgIndex.value}`);
 };
 
 // 监听壁纸切换
@@ -84,6 +94,22 @@ watch(
   () => store.coverType,
   (value) => {
     changeBg(value);
+    // 重置加载状态以确保新背景能正确加载
+    store.setImgLoadStatus(false);
+  },
+);
+
+// 监听本地壁纸索引变化
+watch(
+  () => currentLocalBgIndex.value,
+  (newIndex) => {
+    if (store.coverType === "0") {
+      const newBgUrl = `/images/background${newIndex}.jpg`;
+      console.log(`切换到本地壁纸: ${newBgUrl}`);
+      bgUrl.value = newBgUrl;
+      // 重置加载状态以确保新背景能正确加载
+      store.setImgLoadStatus(false);
+    }
   },
 );
 
@@ -94,6 +120,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearTimeout(imgTimeout.value);
+});
+
+// 暴露方法给父组件
+defineExpose({
+  nextLocalBackground,
+  currentLocalBgIndex
 });
 </script>
 
