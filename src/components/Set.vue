@@ -79,7 +79,14 @@
           </el-radio-group>
         </div>
       </el-collapse-item>
-      <el-collapse-item title="其他设置" name="4">
+      <el-collapse-item title="字体设置" name="4">
+        <div class="font-section">
+          <div class="section-title">Logo 字体选择</div>
+          <div class="font-description">选择您喜欢的 Logo 显示字体</div>
+          <FontSelector />
+        </div>
+      </el-collapse-item>
+      <el-collapse-item title="其他设置" name="5">
         <div>设置内容待增加</div>
       </el-collapse-item>
     </el-collapse>
@@ -90,6 +97,7 @@
 import { CheckSmall, CloseSmall, SuccessPicture } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { storeToRefs } from "pinia";
+import FontSelector from "./FontSelector.vue";
 
 const store = mainStore();
 const {
@@ -193,6 +201,21 @@ const radioChange = () => {
                 color: #fff !important;
               }
             }
+          }
+        }
+        
+        .font-section {
+          .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 8px;
+          }
+          
+          .font-description {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
           }
         }
       }

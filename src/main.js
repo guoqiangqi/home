@@ -6,12 +6,18 @@ import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 // swiper
 import "swiper/css";
+// 字体初始化
+import { initLogoFont } from "@/utils/fontInit";
 
 const app = createApp(App);
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 app.use(pinia);
+
+// 初始化字体设置
+initLogoFont();
+
 app.mount("#app");
 
 // PWA

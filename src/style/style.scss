@@ -55,6 +55,56 @@ a:hover {
   src: url("/font/UnidreamLED.ttf") format("truetype");
 }
 
+// 优雅手写体字体 - 使用 Google Fonts CDN
+// Dancing Script - 优雅的草书风格
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+// Great Vibes - 华丽的装饰性手写体
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+// Satisfy - 流畅的手写风格
+@import url('https://fonts.googleapis.com/css2?family=Satisfy&display=swap');
+
+// Kaushan Script - 现代手写体
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap');
+
+// Allura - 优雅的连笔手写体
+@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
+
+// 定义手写体字体类
+.handwriting-font {
+  font-family: "Dancing Script", cursive;
+  font-weight: 500;
+}
+
+.handwriting-font-great {
+  font-family: "Great Vibes", cursive;
+}
+
+.handwriting-font-satisfy {
+  font-family: "Satisfy", cursive;
+}
+
+.handwriting-font-kaushan {
+  font-family: "Kaushan Script", cursive;
+}
+
+.handwriting-font-allura {
+  font-family: "Allura", cursive;
+}
+
+// CSS 变量支持动态字体切换
+:root {
+  --logo-font-family: "Satisfy", cursive;
+  --logo-font-weight: 500;
+}
+
+// Logo 字体类
+.logo-font {
+  font-family: var(--logo-font-family);
+  font-weight: var(--logo-font-weight);
+}
+
 // 基础样式
 #app {
   position: relative;

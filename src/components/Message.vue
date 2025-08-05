@@ -99,24 +99,25 @@ watch(
       border-radius: 50%;
       width: 120px;
     }
-    .name {
-      width: 100%;
-      padding-left: 22px;
-      transform: translateY(-8px);
-      font-family: "Pacifico-Regular";
+          .name {
+        width: 100%;
+        padding-left: 22px;
+        transform: translateY(-8px);
+        font-family: var(--logo-font-family);
+        font-weight: var(--logo-font-weight);
 
-      .bg {
-        font-size: 5rem;
-      }
+        .bg {
+          font-size: 5rem;
+        }
 
-      .sm {
-        margin-left: 6px;
-        font-size: 2rem;
-        @media (min-width: 721px) and (max-width: 789px) {
-          display: none;
+        .sm {
+          margin-left: 6px;
+          font-size: 2rem;
+          @media (min-width: 721px) and (max-width: 789px) {
+            display: none;
+          }
         }
       }
-    }
     @media (max-width: 768px) {
       .logo-img {
         width: 100px;
