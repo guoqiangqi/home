@@ -89,6 +89,14 @@ const nextLocalBackground = () => {
   console.log(`本地壁纸索引从 ${oldIndex} 切换到 ${currentLocalBgIndex.value}`);
 };
 
+// 设置本地壁纸索引
+const setLocalBackgroundIndex = (index) => {
+  if (index >= 1 && index <= 10) {
+    currentLocalBgIndex.value = index;
+    console.log(`设置本地壁纸索引为 ${index}`);
+  }
+};
+
 // 监听壁纸切换
 watch(
   () => store.coverType,
@@ -125,7 +133,8 @@ onBeforeUnmount(() => {
 // 暴露方法给父组件
 defineExpose({
   nextLocalBackground,
-  currentLocalBgIndex
+  currentLocalBgIndex,
+  setLocalBackgroundIndex
 });
 </script>
 

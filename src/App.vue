@@ -73,9 +73,19 @@
         </Transition>
         
         <!-- 返回提示 -->
-        <div class="return-hint">
-          <p>向上滑动返回太空页面</p>
+        <div class="return-hint" v-show="showMainPage">
+          <div class="hint-content">
+            <div class="hint-icon">↑</div>
+            <p>向上滑动返回太空页面</p>
+          </div>
         </div>
+        
+        <!-- 壁纸选择器 -->
+        <WallpaperSelector 
+          v-show="!store.backgroundShow && !store.setOpenState" 
+          :currentLocalIndex="backgroundRef?.currentLocalBgIndex || 1"
+          @updateLocalIndex="handleUpdateLocalIndex"
+        />
       </div>
     </main>
   </Transition>
@@ -96,6 +106,7 @@ import Footer from "@/components/Footer.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import SpaceBackground from "@/components/SpaceBackground.vue";
+import WallpaperSelector from "@/components/WallpaperSelector.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 
@@ -187,6 +198,13 @@ const changeBackgroundOnPageEnter = () => {
       grouping: true,
       duration: 2000,
     });
+  }
+};
+
+// 处理壁纸选择器更新本地壁纸索引
+const handleUpdateLocalIndex = (index) => {
+  if (backgroundRef.value) {
+    backgroundRef.value.setLocalBackgroundIndex(index);
   }
 };
 
@@ -488,6 +506,18 @@ onBeforeUnmount(() => {
   }
 }
 
+@keyframes bounceUp {
+  0%, 20%, 50%, 80%, 100% { 
+    transform: translateY(0); 
+  }
+  40% { 
+    transform: translateY(-4px); 
+  }
+  60% { 
+    transform: translateY(-2px); 
+  }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -783,19 +813,57 @@ onBeforeUnmount(() => {
   
   .return-hint {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 12px;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
     z-index: 1000;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease-out 2s both;
+    opacity: 0.7;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+      opacity: 0.9;
+    }
+    
+    @media (max-width: 768px) {
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      font-size: 11px;
+      
+      .hint-icon {
+        font-size: 12px;
+      }
+    }
+    
+    .hint-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .hint-icon {
+      font-size: 14px;
+      color: rgba(135, 206, 235, 0.6);
+      animation: bounceUp 2s ease-in-out infinite;
+      text-shadow: 0 0 4px rgba(135, 206, 235, 0.2);
+    }
     
     p {
       margin: 0;
-      color: #ccc;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
   }
 }
