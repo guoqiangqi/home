@@ -119,50 +119,61 @@
             :alt="currentPhoto?.title"
             class="viewer-image"
           />
+          
+          <!-- 照片两侧的导航箭头 -->
+          <div class="photo-navigation">
+            <button 
+              class="nav-arrow nav-prev" 
+              @click="previousPhoto" 
+              :disabled="currentPhotoIndex === 0"
+              title="上一张"
+            >
+              <Icon size="24">
+                <ArrowLeft />
+              </Icon>
+            </button>
+            
+            <button 
+              class="nav-arrow nav-next" 
+              @click="nextPhoto" 
+              :disabled="currentPhotoIndex === currentPhotos.length - 1"
+              title="下一张"
+            >
+              <Icon size="24">
+                <ArrowRight />
+              </Icon>
+            </button>
+          </div>
+          
+          <!-- 照片计数器 -->
+          <div class="photo-counter-overlay">
+            <span class="counter-text">{{ currentPhotoIndex + 1 }} / {{ currentPhotos.length }}</span>
+          </div>
         </div>
-        <div class="photo-viewer-info">
-          <div class="info-header">
-            <h3>{{ currentPhoto?.title }}</h3>
-            <div class="mood-display" v-if="currentPhoto?.mood">
-              <span class="mood-text">心情: {{ currentPhoto?.mood }}</span>
+        
+        <!-- 照片查看器底部文案 -->
+        <div class="photo-viewer-footer">
+          <div class="footer-text">
+            <div class="photo-details">
+              <h4 class="detail-title">{{ currentPhoto?.title }}</h4>
+              <p class="detail-description">{{ currentPhoto?.description }}</p>
+              <div class="detail-meta">
+                <span class="detail-date">{{ formatDate(currentPhoto?.date) }}</span>
+                <span class="detail-location" v-if="currentPhoto?.location">📍 {{ currentPhoto?.location }}</span>
+                <span class="detail-weather" v-if="currentPhoto?.weather">☀️ {{ currentPhoto?.weather }}</span>
+              </div>
+              <div class="detail-tags" v-if="currentPhoto?.tags && currentPhoto?.tags.length">
+                <el-tag 
+                  v-for="tag in currentPhoto?.tags" 
+                  :key="tag"
+                  size="small"
+                  class="detail-tag"
+                >
+                  {{ tag }}
+                </el-tag>
+              </div>
             </div>
           </div>
-          <p class="photo-date">{{ formatDate(currentPhoto?.date) }}</p>
-          <p class="photo-description">{{ currentPhoto?.description }}</p>
-          <div class="photo-tags" v-if="currentPhoto?.tags && currentPhoto?.tags.length">
-            <span class="tags-label">标签:</span>
-            <el-tag 
-              v-for="tag in currentPhoto?.tags" 
-              :key="tag"
-              size="small"
-              class="tag"
-            >
-              {{ tag }}
-            </el-tag>
-          </div>
-          <div class="photo-location" v-if="currentPhoto?.location">
-            <span class="location-icon">📍</span>
-            <span>{{ currentPhoto?.location }}</span>
-          </div>
-          <div class="photo-weather" v-if="currentPhoto?.weather">
-            <span class="weather-icon">☀️</span>
-            <span>{{ currentPhoto?.weather }}</span>
-          </div>
-        </div>
-        <div class="photo-viewer-controls">
-          <el-button @click="previousPhoto" :disabled="currentPhotoIndex === 0">
-            <Icon size="16">
-              <ArrowLeft />
-            </Icon>
-            上一张
-          </el-button>
-          <span class="photo-counter">{{ currentPhotoIndex + 1 }} / {{ currentPhotos.length }}</span>
-          <el-button @click="nextPhoto" :disabled="currentPhotoIndex === currentPhotos.length - 1">
-            下一张
-            <Icon size="16">
-              <ArrowRight />
-            </Icon>
-          </el-button>
         </div>
       </div>
     </el-dialog>
@@ -764,108 +775,170 @@ onMounted(() => {
   
   .photo-viewer-image {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    padding: 0 20px;
+    position: relative;
     
     .viewer-image {
       max-width: 100%;
-      max-height: 60vh;
+      max-height: 75vh;
       object-fit: contain;
-      border-radius: 12px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.02);
+      }
     }
-  }
-  
-  .photo-viewer-info {
-    padding: 25px;
-    text-align: left;
-    color: white;
     
-    .info-header {
+    .photo-navigation {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      padding: 0 20px;
+      pointer-events: none;
       
-      h3 {
-        font-size: 1.8rem;
-        margin-bottom: 0;
-        font-weight: bold;
-      }
-      
-      .mood-display {
-        .mood-text {
-          font-size: 1.2rem;
-          opacity: 0.9;
+      .nav-arrow {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(128, 128, 128, 0.7) 0%, rgba(128, 128, 128, 0.5) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        
+        &:hover {
+          background: linear-gradient(135deg, rgba(128, 128, 128, 0.85) 0%, rgba(128, 128, 128, 0.65) 100%);
+          transform: scale(1.05);
+          box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+          color: rgba(255, 255, 255, 1);
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        &:active {
+          transform: scale(0.98);
+        }
+        
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          transform: none;
+          background: linear-gradient(135deg, rgba(128, 128, 128, 0.4) 0%, rgba(128, 128, 128, 0.3) 100%);
+          
+          &:hover {
+            background: linear-gradient(135deg, rgba(128, 128, 128, 0.4) 0%, rgba(128, 128, 128, 0.3) 100%);
+            transform: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+          }
         }
       }
     }
     
-    .photo-date {
-      font-size: 1.1rem;
-      opacity: 0.8;
-      margin-bottom: 15px;
-    }
-    
-    .photo-description {
-      font-size: 1rem;
-      opacity: 0.9;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-    
-    .photo-tags {
-      margin-bottom: 15px;
+    .photo-counter-overlay {
+      position: absolute;
+      bottom: 15px;
+      right: 20px;
+      background: linear-gradient(135deg, rgba(128, 128, 128, 0.7) 0%, rgba(128, 128, 128, 0.5) 100%);
+      border-radius: 20px;
+      padding: 8px 16px;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       
-      .tags-label {
+      .counter-text {
+        color: rgba(255, 255, 255, 0.95);
         font-size: 0.9rem;
-        opacity: 0.8;
-        margin-right: 10px;
+        font-weight: 500;
       }
-      
-      .tag {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        margin-right: 8px;
-        margin-bottom: 5px;
-      }
-    }
-    
-    .photo-location, .photo-weather {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 8px;
     }
   }
   
-  .photo-viewer-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  
+
+  
+  .photo-viewer-footer {
+    padding: 18px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.15) 100%);
     
-    .photo-counter {
-      color: white;
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-    
-    .el-button {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      
-      &:hover {
-        background: rgba(255, 255, 255, 0.3);
-      }
-      
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .footer-text {
+      .photo-details {
+        .detail-title {
+          font-size: 1.1rem;
+          color: white;
+          margin-bottom: 8px;
+          font-weight: 600;
+          background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        
+        .detail-description {
+          font-size: 0.9rem;
+          color: white;
+          opacity: 0.9;
+          line-height: 1.6;
+          margin-bottom: 12px;
+          font-weight: 400;
+        }
+        
+        .detail-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 10px;
+          
+          .detail-date,
+          .detail-location,
+          .detail-weather {
+            font-size: 0.8rem;
+            color: white;
+            opacity: 0.8;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          }
+        }
+        
+        .detail-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+          
+          .detail-tag {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.25) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            
+            &:hover {
+              background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.35) 100%);
+              transform: translateY(-1px);
+            }
+          }
+        }
       }
     }
   }
@@ -916,6 +989,71 @@ onMounted(() => {
         
         .photo-description {
           -webkit-line-clamp: 2;
+        }
+      }
+    }
+  }
+  
+  .photo-viewer-image {
+    padding: 0 15px;
+    
+    .viewer-image {
+      max-height: 60vh;
+    }
+    
+    .photo-navigation {
+      padding: 0 15px;
+      
+      .nav-arrow {
+        width: 40px;
+        height: 40px;
+      }
+    }
+    
+    .photo-counter-overlay {
+      bottom: 10px;
+      right: 15px;
+      padding: 6px 12px;
+      
+      .counter-text {
+        font-size: 0.8rem;
+      }
+    }
+  }
+  
+  .photo-viewer-footer {
+    padding: 12px 15px;
+    
+    .footer-text {
+      .photo-details {
+        .detail-title {
+          font-size: 1rem;
+          margin-bottom: 6px;
+        }
+        
+        .detail-description {
+          font-size: 0.85rem;
+          margin-bottom: 10px;
+        }
+        
+        .detail-meta {
+          gap: 8px;
+          margin-bottom: 8px;
+          
+          .detail-date,
+          .detail-location,
+          .detail-weather {
+            font-size: 0.75rem;
+            padding: 3px 6px;
+          }
+        }
+        
+        .detail-tags {
+          gap: 4px;
+          
+          .detail-tag {
+            font-size: 0.7rem;
+          }
         }
       }
     }
