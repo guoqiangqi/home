@@ -1,7 +1,13 @@
 <template>
   <div class="wallpaper-selector" :class="{ collapsed: isCollapsed }">
     <!-- 折叠按钮 -->
-    <div class="collapse-btn" @click="toggleCollapse" :title="isCollapsed ? '展开壁纸选择' : '收起壁纸选择'">
+    <div 
+      class="collapse-btn" 
+      @click="toggleCollapse" 
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
+      :title="isCollapsed ? '悬浮或点击展开壁纸选择' : '收起壁纸选择'"
+    >
       <div class="btn-icon">
         <span v-if="isCollapsed">◀</span>
         <span v-else>▶</span>
@@ -9,7 +15,13 @@
     </div>
     
     <!-- 壁纸选择面板 -->
-    <div class="selector-panel" v-show="!isCollapsed">
+    <div 
+      class="selector-panel" 
+      :class="{ 'panel-collapsing': isCollapsing }"
+      v-show="!isCollapsed || isCollapsing"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
+    >
       <div class="panel-header">
         <h3>壁纸选择</h3>
       </div>
@@ -82,21 +94,80 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { mainStore } from "@/store";
 import { ElMessage } from 'element-plus';
 
 const store = mainStore();
 const isCollapsed = ref(true); // 默认隐藏
 
+// 鼠标悬浮相关变量
+const isHovering = ref(false);
+const hoverTimeout = ref(null);
+const isCollapsing = ref(false);
+
 const emit = defineEmits(['updateLocalIndex']);
 
 // 当前本地壁纸索引
 const currentLocalIndex = ref(1);
 
+// 鼠标进入事件
+const handleMouseEnter = () => {
+  isHovering.value = true;
+  isCollapsing.value = false;
+  
+  // 清除之前的定时器
+  if (hoverTimeout.value) {
+    clearTimeout(hoverTimeout.value);
+    hoverTimeout.value = null;
+  }
+  
+  // 立即展开
+  if (isCollapsed.value) {
+    isCollapsed.value = false;
+  }
+};
+
+// 鼠标离开事件
+const handleMouseLeave = () => {
+  isHovering.value = false;
+  
+  // 延迟折叠，给用户一些时间
+  hoverTimeout.value = setTimeout(() => {
+    if (!isHovering.value) {
+      startCollapseAnimation();
+    }
+  }, 300); // 300ms延迟，减少等待时间
+};
+
+// 开始折叠动画
+const startCollapseAnimation = () => {
+  isCollapsing.value = true;
+  
+  // 等待动画完成后隐藏面板
+  setTimeout(() => {
+    isCollapsed.value = true;
+    isCollapsing.value = false;
+  }, 300); // 动画持续时间
+};
+
 // 切换折叠状态
 const toggleCollapse = () => {
-  isCollapsed.value = !isCollapsed.value;
+  if (isCollapsed.value) {
+    // 展开
+    isCollapsed.value = false;
+    isCollapsing.value = false;
+  } else {
+    // 折叠
+    startCollapseAnimation();
+  }
+  
+  // 清除悬浮状态
+  isHovering.value = false;
+  if (hoverTimeout.value) {
+    clearTimeout(hoverTimeout.value);
+    hoverTimeout.value = null;
+  }
 };
 
 // 选择本地壁纸
@@ -158,6 +229,13 @@ watch(() => props.currentLocalIndex, (newIndex) => {
     currentLocalIndex.value = newIndex;
   }
 }, { immediate: true });
+
+// 组件卸载时清理定时器
+onBeforeUnmount(() => {
+  if (hoverTimeout.value) {
+    clearTimeout(hoverTimeout.value);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -173,6 +251,7 @@ watch(() => props.currentLocalIndex, (newIndex) => {
   &.collapsed {
     .selector-panel {
       transform: translateX(-100%);
+      opacity: 0;
     }
   }
   
@@ -201,6 +280,18 @@ watch(() => props.currentLocalIndex, (newIndex) => {
   opacity: 0.5;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   
+  // 扩大悬浮区域
+  &::after {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    width: 64px;
+    height: 88px;
+    background: transparent;
+    z-index: -1;
+  }
+  
   &:hover {
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3));
     transform: translateY(-50%) translateX(-1px) scale(1.01);
@@ -211,6 +302,27 @@ watch(() => props.currentLocalIndex, (newIndex) => {
   
   &:active {
     transform: translateY(-50%) translateX(-1px) scale(0.99);
+  }
+  
+  // 添加悬浮提示动画
+  &::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid rgba(135, 206, 235, 0.6);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+    left: -12px;
   }
   
   .btn-icon {
@@ -224,6 +336,23 @@ watch(() => props.currentLocalIndex, (newIndex) => {
   &:hover .btn-icon {
     color: rgba(255, 255, 255, 0.8);
   }
+  
+  // 添加悬浮提示文字
+  &:hover::after {
+    content: '悬浮展开';
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    animation: fadeInOut 2s ease-in-out;
+  }
 }
 
 .selector-panel {
@@ -234,10 +363,17 @@ watch(() => props.currentLocalIndex, (newIndex) => {
   border-radius: 0 16px 16px 0;
   padding: 24px;
   overflow-y: auto;
-  transition: transform 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   animation: slideInLeft 0.5s ease-out;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  opacity: 1;
+  transform: translateX(0);
+  
+  // 折叠动画
+  &.panel-collapsing {
+    animation: slideOutLeft 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+  }
   
   &::-webkit-scrollbar {
     width: 6px;
@@ -424,9 +560,15 @@ watch(() => props.currentLocalIndex, (newIndex) => {
   }
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes slideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
 }
 
 @keyframes fadeInLeft {
@@ -438,6 +580,16 @@ watch(() => props.currentLocalIndex, (newIndex) => {
     opacity: 1;
     transform: translateY(-50%) translateX(0);
   }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
 }
 
 
