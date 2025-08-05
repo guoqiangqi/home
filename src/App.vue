@@ -76,7 +76,7 @@
         </Transition>
         
         <!-- 返回提示 -->
-        <div class="return-hint" v-show="showMainPage">
+        <div class="return-hint" v-show="showMainPage && !store.albumOpenState">
           <div class="hint-content">
             <div class="hint-icon">↑</div>
             <p>向上滑动返回太空页面</p>
