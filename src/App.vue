@@ -47,7 +47,7 @@
       <!-- 主内容页面 -->
       <div v-else class="main-page" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
         <div class="container" v-show="!store.backgroundShow">
-          <section class="all" v-show="!store.setOpenState && !store.albumOpenState">
+          <section class="all" v-show="!store.setOpenState && !store.albumOpenState && !store.messageBoardOpenState">
             <MainLeft />
             <MainRight v-show="!store.boxOpenState" />
             <Box v-show="store.boxOpenState" />
@@ -57,6 +57,9 @@
           </section>
           <section class="album" v-show="store.albumOpenState" @click="store.albumOpenState = false">
             <Album />
+          </section>
+          <section class="message-board" v-show="store.messageBoardOpenState" @click="store.messageBoardOpenState = false">
+            <MessageBoard />
           </section>
         </div>
         
@@ -76,7 +79,7 @@
         </Transition>
         
         <!-- 返回提示 -->
-        <div class="return-hint" v-show="showMainPage && !store.albumOpenState">
+        <div class="return-hint" v-show="showMainPage && !store.albumOpenState && !store.messageBoardOpenState">
           <div class="hint-content">
             <div class="hint-icon">↑</div>
             <p>向上滑动返回太空页面</p>
@@ -109,6 +112,7 @@ import Footer from "@/components/Footer.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import Album from "@/views/Album/index.vue";
+import MessageBoard from "@/views/MessageBoard/index.vue";
 import SpaceBackground from "@/components/SpaceBackground.vue";
 import WallpaperSelector from "@/components/WallpaperSelector.vue";
 import cursorInit from "@/utils/cursor.js";
@@ -163,8 +167,8 @@ const handleScroll = () => {
 
 // 鼠标滚轮事件
 const handleWheel = (event) => {
-  // 如果相册页面打开，不响应滚轮返回
-  if (store.albumOpenState) return;
+  // 如果相册页面或留言板页面打开，不响应滚轮返回
+  if (store.albumOpenState || store.messageBoardOpenState) return;
   
   if (showMainPage.value && window.scrollY <= 0 && event.deltaY < 0) {
     // 向上滚动且在主页面顶部时，返回太空页面
@@ -731,6 +735,19 @@ onBeforeUnmount(() => {
     }
     
     .album {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #00000080;
+      backdrop-filter: blur(20px);
+      z-index: 2;
+      animation: fade 0.5s;
+      overflow-y: auto;
+    }
+    
+    .message-board {
       position: fixed;
       top: 0;
       left: 0;

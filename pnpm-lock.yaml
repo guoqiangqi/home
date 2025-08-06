@@ -38,6 +38,9 @@ importers:
       swiper:
         specifier: ^11.1.1
         version: 11.1.1
+      twikoo:
+        specifier: ^1.6.44
+        version: 1.6.44
       vue:
         specifier: ^3.4.24
         version: 3.4.24
@@ -2111,6 +2114,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -2192,6 +2196,9 @@ packages:
 
   tr46@1.0.1:
     resolution: {integrity: sha512-dTpowEjclQ7Kgx5SdBkqRzVhERQXov8/l9Ft9dVM9fmg0W0KQSVaXX9T4i6twCPNtYiZM53lpSSUAwJbFPOHxA==}
+
+  twikoo@1.6.44:
+    resolution: {integrity: sha512-Y3YfGtMelWT+1XxZS8SmGXkHZ6/26ry1ZteKKBNTYV0oA+o5/2ELUMi4ta2zYD/V0wGZGv6EXJ6HJU8GTPVh4g==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -4764,6 +4771,8 @@ snapshots:
   tr46@1.0.1:
     dependencies:
       punycode: 2.3.1
+
+  twikoo@1.6.44: {}
 
   type-check@0.4.0:
     dependencies:
