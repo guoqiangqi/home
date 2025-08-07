@@ -24,6 +24,13 @@ export const twikooConfig = {
     nickname: '昵称',
     email: '邮箱',
     website: '网址（选填）'
+  },
+  
+  // 地点信息配置
+  location: {
+    enabled: true,
+    showInComments: true,
+    showInForm: true
   }
 };
 
@@ -104,6 +111,35 @@ export const twikooStyles = `
     background: rgba(255, 255, 255, 0.1) !important;
     border-radius: 6px !important;
     backdrop-filter: blur(5px) !important;
+  }
+  
+  /* 地点信息 - 现代化设计 */
+  .twikoo .twikoo-comment .twikoo-location {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.8rem !important;
+    font-weight: 400 !important;
+    margin-left: 10px !important;
+    padding: 4px 8px !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+    border-radius: 6px !important;
+    backdrop-filter: blur(5px) !important;
+    border: 1px solid rgba(102, 126, 234, 0.2) !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+  }
+  
+  .twikoo .twikoo-comment .twikoo-location:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.2) 100%) !important;
+    border-color: rgba(102, 126, 234, 0.4) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+  }
+  
+  /* 地点信息图标 */
+  .twikoo .twikoo-comment .twikoo-location::before {
+    content: '📍' !important;
+    margin-right: 4px !important;
+    font-size: 0.9em !important;
   }
   
   /* 评论内容 - 优化排版 */
@@ -472,5 +508,276 @@ export const twikooUtils = {
     style.setAttribute('data-twikoo-styles', 'true');
     style.textContent = styles;
     document.head.appendChild(style);
+  },
+  
+  // 添加地点信息到评论
+  addLocationToComments: async () => {
+    try {
+      const { getFormattedLocation } = await import('@/utils/location.js');
+      const locationText = await getFormattedLocation();
+      
+      console.log('获取到地点信息:', locationText);
+      
+      // 查找所有可能的评论容器
+      const selectors = [
+        '.tk-comment',
+        '.twikoo-comment',
+        '.twikoo .tk-comment',
+        '.twikoo .twikoo-comment',
+        '[class*="comment"]'
+      ];
+      
+      let comments = [];
+      for (const selector of selectors) {
+        comments = document.querySelectorAll(selector);
+        if (comments.length > 0) {
+          console.log(`使用选择器 "${selector}" 找到 ${comments.length} 个评论`);
+          break;
+        }
+      }
+      
+      if (comments.length === 0) {
+        console.log('未找到任何评论，尝试查找所有可能的评论元素...');
+        // 查找所有可能包含评论的元素
+        const allElements = document.querySelectorAll('*');
+        comments = Array.from(allElements).filter(el => {
+          const text = el.textContent || '';
+          return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+        });
+        console.log('通过文本内容找到可能的评论元素:', comments.length);
+      }
+      
+      comments.forEach((comment, index) => {
+        console.log(`处理第${index + 1}个评论:`, comment);
+        
+        // 检查是否已经有地点信息
+        if (!comment.querySelector('.twikoo-location')) {
+          // 尝试多种方式查找时间元素
+          const timeSelectors = [
+            '.tk-time',
+            '.twikoo-time',
+            '[class*="time"]',
+            'span:contains("分钟前"), span:contains("小时前"), span:contains("天前")'
+          ];
+          
+          let timeElement = null;
+          for (const selector of timeSelectors) {
+            timeElement = comment.querySelector(selector);
+            if (timeElement) break;
+          }
+          
+          // 如果没找到时间元素，尝试通过文本内容查找
+          if (!timeElement) {
+            const spans = comment.querySelectorAll('span');
+            timeElement = Array.from(spans).find(span => {
+              const text = span.textContent || '';
+              return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+            });
+          }
+          
+          if (timeElement) {
+            console.log('找到时间元素:', timeElement);
+            
+            const locationElement = document.createElement('span');
+            locationElement.className = 'twikoo-location';
+            locationElement.textContent = locationText.replace('📍 ', '');
+            locationElement.title = '点击查看详细位置';
+            locationElement.style.cssText = `
+              color: rgba(255, 255, 255, 0.7) !important;
+              font-size: 0.8rem !important;
+              font-weight: 400 !important;
+              margin-left: 10px !important;
+              padding: 4px 8px !important;
+              background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+              border-radius: 6px !important;
+              backdrop-filter: blur(5px) !important;
+              border: 1px solid rgba(102, 126, 234, 0.2) !important;
+              transition: all 0.3s ease !important;
+              cursor: pointer !important;
+            `;
+            
+            // 插入到时间元素后面
+            timeElement.parentNode.insertBefore(locationElement, timeElement.nextSibling);
+            console.log(`为第${index + 1}个评论添加地点信息:`, locationText);
+          } else {
+            console.log(`第${index + 1}个评论没有找到时间元素，尝试添加到评论末尾`);
+            
+            // 如果找不到时间元素，添加到评论末尾
+            const locationElement = document.createElement('div');
+            locationElement.className = 'twikoo-location';
+            locationElement.textContent = locationText;
+            locationElement.title = '点击查看详细位置';
+            locationElement.style.cssText = `
+              color: rgba(255, 255, 255, 0.7) !important;
+              font-size: 0.8rem !important;
+              font-weight: 400 !important;
+              margin-top: 8px !important;
+              padding: 4px 8px !important;
+              background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+              border-radius: 6px !important;
+              backdrop-filter: blur(5px) !important;
+              border: 1px solid rgba(102, 126, 234, 0.2) !important;
+              transition: all 0.3s ease !important;
+              cursor: pointer !important;
+              display: inline-block !important;
+            `;
+            
+            comment.appendChild(locationElement);
+            console.log(`为第${index + 1}个评论末尾添加地点信息:`, locationText);
+          }
+        } else {
+          console.log(`第${index + 1}个评论已有地点信息`);
+        }
+      });
+    } catch (error) {
+      console.error('添加地点信息失败:', error);
+    }
+  },
+  
+  // 监听新评论并添加地点信息
+  observeNewComments: () => {
+    console.log('开始监听新评论...');
+    
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            // 检查新添加的节点是否是评论
+            let newComments = [];
+            
+            // 检查节点本身是否是评论
+            if (node.classList) {
+              const isComment = node.classList.contains('tk-comment') || 
+                               node.classList.contains('twikoo-comment') ||
+                               node.textContent?.includes('分钟前') ||
+                               node.textContent?.includes('小时前') ||
+                               node.textContent?.includes('天前');
+              if (isComment) {
+                newComments.push(node);
+              }
+            }
+            
+            // 检查节点内的评论
+            if (node.querySelectorAll) {
+              const selectors = [
+                '.tk-comment',
+                '.twikoo-comment',
+                '[class*="comment"]'
+              ];
+              
+              for (const selector of selectors) {
+                const foundComments = node.querySelectorAll(selector);
+                if (foundComments.length > 0) {
+                  newComments.push(...foundComments);
+                  break;
+                }
+              }
+              
+              // 如果没找到，尝试通过文本内容查找
+              if (newComments.length === 0) {
+                const allElements = node.querySelectorAll('*');
+                const commentElements = Array.from(allElements).filter(el => {
+                  const text = el.textContent || '';
+                  return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+                });
+                newComments.push(...commentElements);
+              }
+            }
+            
+            newComments.forEach(async (comment) => {
+              if (!comment.querySelector('.twikoo-location')) {
+                try {
+                  const { getFormattedLocation } = await import('@/utils/location.js');
+                  const locationText = await getFormattedLocation();
+                  
+                  // 尝试多种方式查找时间元素
+                  const timeSelectors = [
+                    '.tk-time',
+                    '.twikoo-time',
+                    '[class*="time"]'
+                  ];
+                  
+                  let timeElement = null;
+                  for (const selector of timeSelectors) {
+                    timeElement = comment.querySelector(selector);
+                    if (timeElement) break;
+                  }
+                  
+                  // 如果没找到时间元素，尝试通过文本内容查找
+                  if (!timeElement) {
+                    const spans = comment.querySelectorAll('span');
+                    timeElement = Array.from(spans).find(span => {
+                      const text = span.textContent || '';
+                      return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+                    });
+                  }
+                  
+                  if (timeElement) {
+                    const locationElement = document.createElement('span');
+                    locationElement.className = 'twikoo-location';
+                    locationElement.textContent = locationText.replace('📍 ', '');
+                    locationElement.title = '点击查看详细位置';
+                    locationElement.style.cssText = `
+                      color: rgba(255, 255, 255, 0.7) !important;
+                      font-size: 0.8rem !important;
+                      font-weight: 400 !important;
+                      margin-left: 10px !important;
+                      padding: 4px 8px !important;
+                      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+                      border-radius: 6px !important;
+                      backdrop-filter: blur(5px) !important;
+                      border: 1px solid rgba(102, 126, 234, 0.2) !important;
+                      transition: all 0.3s ease !important;
+                      cursor: pointer !important;
+                    `;
+                    
+                    timeElement.parentNode.insertBefore(locationElement, timeElement.nextSibling);
+                    console.log('为新评论添加地点信息:', locationText);
+                  } else {
+                    // 如果找不到时间元素，添加到评论末尾
+                    const locationElement = document.createElement('div');
+                    locationElement.className = 'twikoo-location';
+                    locationElement.textContent = locationText;
+                    locationElement.title = '点击查看详细位置';
+                    locationElement.style.cssText = `
+                      color: rgba(255, 255, 255, 0.7) !important;
+                      font-size: 0.8rem !important;
+                      font-weight: 400 !important;
+                      margin-top: 8px !important;
+                      padding: 4px 8px !important;
+                      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+                      border-radius: 6px !important;
+                      backdrop-filter: blur(5px) !important;
+                      border: 1px solid rgba(102, 126, 234, 0.2) !important;
+                      transition: all 0.3s ease !important;
+                      cursor: pointer !important;
+                      display: inline-block !important;
+                    `;
+                    
+                    comment.appendChild(locationElement);
+                    console.log('为新评论末尾添加地点信息:', locationText);
+                  }
+                } catch (error) {
+                  console.error('为新评论添加地点信息失败:', error);
+                }
+              }
+            });
+          }
+        });
+      });
+    });
+    
+    const twikooContainer = document.getElementById('twikoo');
+    if (twikooContainer) {
+      observer.observe(twikooContainer, {
+        childList: true,
+        subtree: true
+      });
+      console.log('已开始监听twikoo容器变化');
+    } else {
+      console.error('未找到twikoo容器');
+    }
+    
+    return observer;
   }
 };
