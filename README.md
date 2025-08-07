@@ -97,7 +97,7 @@ docker run -p 12445:12445 -d home
 ```json
 {
   "icon": "Blog",
-  "name": "博客",
+  "name": "随笔",
   "link": "https://blog.imsyy.top/"
 },
 ```
