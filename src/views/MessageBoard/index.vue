@@ -55,8 +55,6 @@
     <!-- Twikoo 评论系统 -->
     <div class="twikoo-section">
       <div class="twikoo-container">
-
-        
         <div id="twikoo" class="twikoo-comments"></div>
       </div>
     </div>
@@ -70,13 +68,11 @@ import { Icon } from "@vicons/utils";
 import { mainStore } from "@/store";
 import { ElMessage } from 'element-plus';
 import { twikooConfig, twikooStyles, twikooUtils } from '@/config/twikoo.js';
-import { getFormattedLocation } from '@/utils/location.js';
 
 // 响应式数据
 const store = mainStore();
 let twikooInstance = null;
 let isTwikooInitialized = false;
-let locationObserver = null;
 
 // 初始化 Twikoo
 const initTwikoo = async () => {
@@ -127,29 +123,7 @@ const initTwikoo = async () => {
     // 初始化 Twikoo
     twikooInstance = window.twikoo.init(config);
     
-    // 等待Twikoo加载完成后添加地点信息
-    setTimeout(async () => {
-      try {
-        // 为现有评论添加地点信息
-        await twikooUtils.addLocationToComments();
-        
-        // 监听新评论并添加地点信息
-        locationObserver = twikooUtils.observeNewComments();
-        
-        // 显示成功消息
-        //ElMessage({
-        //  message: '留言板加载成功！',
-        //  type: 'success',
-        //  duration: 2000
-        //});
-      } catch (error) {
-        console.error('添加地点信息失败:', error);
-      }
-    }, 2000);
-    
   } catch (error) {
-    console.error('Twikoo 初始化失败:', error);
-    
     ElMessage({
       message: '评论系统暂时不可用，请稍后再试。',
       type: 'warning',
@@ -192,14 +166,6 @@ const retryInit = () => {
   initTwikoo();
 };
 
-
-
-
-
-
-
-
-
 // 暴露给全局
 window.retryInit = retryInit;
 
@@ -211,12 +177,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // 清理观察器
-  if (locationObserver) {
-    locationObserver.disconnect();
-    locationObserver = null;
-  }
-  
   twikooInstance = null;
   isTwikooInitialized = false;
   delete window.retryInit;
