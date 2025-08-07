@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: home-app-ingress
+  annotations:
+    # 如果使用 nginx-ingress
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt-dns02
+    # 如果使用 traefik
+    # traefik.ingress.kubernetes.io/router.entrypoints: web
+    # 启用 CORS
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+spec:
+  rules:
+  - host: qicheng.love  # 替换为您的域名
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: home-app-service
+            port:
+              number: 80
+  # 如果需要 HTTPS，取消注释以下部分
+  # tls:
+  # - hosts:
+  #   - qicheng.love
+  #   secretName: home-tls-secret 
