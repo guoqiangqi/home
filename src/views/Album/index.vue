@@ -201,7 +201,7 @@ const photosData = ref([
     title: '清晨的第一缕阳光',
     description: '今天起得很早，看到了美丽的日出。阳光透过窗帘洒在书桌上，感觉整个世界都充满了希望。决定今天要好好工作，不辜负这美好的开始。',
     date: '2024-01-15',
-    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    url: 'https://99e3n0ajyhfj5o2d.public.blob.vercel-storage.com/1.jpg',
     mood: '😊',
     tags: ['清晨', '阳光', '希望'],
     location: '家里',
@@ -212,7 +212,7 @@ const photosData = ref([
     title: '与朋友的咖啡时光',
     description: '和老朋友在咖啡厅聊天，聊了很多过去的事情。时间过得真快，但我们的友谊依然如初。咖啡很香，心情很暖。',
     date: '2024-01-15',
-    url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&h=600&fit=crop',
+    url: 'https://99e3n0ajyhfj5o2d.public.blob.vercel-storage.com/2.jpg',
     mood: '😌',
     tags: ['朋友', '咖啡', '回忆'],
     location: '星巴克咖啡厅',
@@ -223,7 +223,7 @@ const photosData = ref([
     title: '春天的樱花',
     description: '樱花盛开的季节，粉色的花瓣随风飘舞。站在樱花树下，感受春天的气息，心情变得格外轻松。',
     date: '2024-01-20',
-    url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800&h=600&fit=crop',
+    url: 'https://99e3n0ajyhfj5o2d.public.blob.vercel-storage.com/3.jpg',
     mood: '🌸',
     tags: ['春天', '樱花', '自然'],
     location: '公园',
@@ -234,7 +234,7 @@ const photosData = ref([
     title: '山间的小路',
     description: '周末去爬山，走在山间的小路上，呼吸着新鲜的空气。远离城市的喧嚣，感受大自然的宁静。',
     date: '2024-01-20',
-    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    url: 'https://99e3n0ajyhfj5o2d.public.blob.vercel-storage.com/4.jpg',
     mood: '🌿',
     tags: ['爬山', '自然', '宁静'],
     location: '郊外山区',
@@ -245,45 +245,23 @@ const photosData = ref([
     title: '深夜的星空',
     description: '今晚的星空特别美，看到了很多星星。想起了小时候在乡下看星星的日子，那时候的梦想现在都实现了吗？',
     date: '2024-01-25',
-    url: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&h=600&fit=crop',
+    url: 'https://99e3n0ajyhfj5o2d.public.blob.vercel-storage.com/5.jpg',
     mood: '✨',
     tags: ['星空', '回忆', '梦想'],
     location: '阳台',
     weather: '晴朗'
   },
   {
-    id: 6,
-    title: '雨天的读书时光',
-    description: '外面下着小雨，坐在窗边读书。雨声很轻，书页翻动的声音很清晰。这样的时光很珍贵，让人感到平静。',
-    date: '2024-01-25',
-    url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&h=600&fit=crop',
-    mood: '📚',
-    tags: ['雨天', '读书', '平静'],
-    location: '书房',
-    weather: '小雨'
-  },
-  {
     id: 7,
     title: '第一次做蛋糕',
     description: '今天尝试做蛋糕，虽然不是很完美，但是过程很有趣。面粉撒得到处都是，但是看到成品的那一刻还是很开心的。',
     date: '2024-01-30',
-    url: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800&h=600&fit=crop',
+    url: 'https://99e3n0ajyhfj5o2d.public.blob.vercel-storage.com/6.jpg',
     mood: '🎂',
     tags: ['烘焙', '第一次', '开心'],
     location: '厨房',
     weather: '室内'
   },
-  {
-    id: 8,
-    title: '夕阳西下',
-    description: '傍晚时分，夕阳把整个天空都染成了金黄色。站在高处看着夕阳慢慢落下，感觉时间都静止了。',
-    date: '2024-01-30',
-    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-    mood: '🌅',
-    tags: ['夕阳', '美景', '宁静'],
-    location: '楼顶',
-    weather: '晴朗'
-  }
 ]);
 
 // 计算属性
