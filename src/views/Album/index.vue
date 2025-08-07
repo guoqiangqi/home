@@ -3,8 +3,18 @@
     <!-- 相册头部 -->
     <div class="album-header">
       <div class="header-content">
-        <h1 class="album-title">📸 生活相册</h1>
-        <p class="album-subtitle">记录每一个美好瞬间</p>
+        <div class="title-section">
+          <div class="extra-camera-icon">📸</div>
+          <div class="title-wrapper">
+            <h1 class="album-title">
+              <span class="title-icon">📸</span>
+              <span class="title-text">生活相册</span>
+            </h1>
+            <div class="title-underline"></div>
+          </div>
+          <p class="album-subtitle">记录每一个美好瞬间</p>
+        </div>
+        
         <el-button 
           class="close-btn"
           @click="closeAlbum"
@@ -371,30 +381,97 @@ onMounted(() => {
 }
 
 .album-header {
+  position: relative;
+  z-index: 1;
+  padding: 0px 30px 20px;
+  flex-shrink: 0;
   margin-bottom: 30px;
   
   .header-content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    position: relative;
+    align-items: flex-start;
     
-    .album-title {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      font-weight: bold;
-      text-align: center;
+    .title-section {
       flex: 1;
-    }
-    
-    .album-subtitle {
-      font-size: 1.1rem;
-      opacity: 0.8;
       text-align: center;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 60px;
+      
+      .extra-camera-icon {
+        font-size: 3.5rem;
+        margin-bottom: -70px;
+        margin-top: 20px;
+        animation: float 3s ease-in-out infinite;
+        opacity: 0.8;
+      }
+      
+      .title-wrapper {
+        display: inline-block;
+        position: relative;
+        margin-bottom: 15px;
+        
+        .album-title {
+          font-size: 3.5rem;
+          font-weight: 800;
+          margin: 0;
+          background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: gradientShift 3s ease-in-out infinite;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 15px;
+          
+          .title-icon {
+            font-size: 3rem;
+            animation: pulse 2s ease-in-out infinite;
+          }
+          
+          .title-text {
+            position: relative;
+            
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -5px;
+              left: 0;
+              width: 100%;
+              height: 2px;
+              background: linear-gradient(90deg, transparent, #ff6b6b, transparent);
+              transform: scaleX(0);
+              animation: titleUnderline 2s ease-in-out infinite;
+            }
+          }
+        }
+        
+        .title-underline {
+          position: absolute;
+          bottom: -8px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60%;
+          height: 3px;
+          background: linear-gradient(90deg, transparent, #ff6b6b, #4ecdc4, #ff6b6b, transparent);
+          border-radius: 2px;
+          opacity: 0.6;
+        }
+      }
+      
+      .album-subtitle {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+        margin-top: 10px;
+        font-weight: 400;
+        line-height: 1.6;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: subtitleGlow 3s ease-in-out infinite;
+      }
     }
     
     .close-btn {
@@ -408,11 +485,14 @@ onMounted(() => {
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       
       &:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: scale(1.1);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
       }
       
       &:active {
@@ -940,9 +1020,29 @@ onMounted(() => {
   }
   
   .album-header {
+    padding: 0px 15px 15px;
+    
     .header-content {
-      .album-title {
-        font-size: 2rem;
+      .title-section {
+        .extra-camera-icon {
+          font-size: 1.5rem;
+          margin-bottom: 8px;
+        }
+        
+        .title-wrapper {
+          .album-title {
+            font-size: 2.5rem;
+            gap: 10px;
+            
+            .title-icon {
+              font-size: 2.2rem;
+            }
+          }
+        }
+        
+        .album-subtitle {
+          font-size: 1rem;
+        }
       }
     }
   }
@@ -1047,6 +1147,52 @@ onMounted(() => {
         }
       }
     }
+  }
+}
+
+// 动画效果
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes titleUnderline {
+  0%, 100% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(1.2);
+  }
+}
+
+@keyframes subtitleGlow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
   }
 }
 </style> 
