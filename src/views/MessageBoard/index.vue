@@ -276,7 +276,7 @@ onUnmounted(() => {
 .message-board-header {
   position: relative;
   z-index: 1;
-  padding: 40px 30px 20px;
+  padding: 0px 30px 20px;
   flex-shrink: 0;
   
   .header-content {
@@ -359,14 +359,15 @@ onUnmounted(() => {
       color: white;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-top: 30px;
       
       &:hover {
         background: rgba(255, 255, 255, 0.2);
