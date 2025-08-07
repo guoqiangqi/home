@@ -203,6 +203,14 @@ onUnmounted(() => {
   );
 }
 
+// Twikoo 评论样式
+:deep(.tk-comment) {
+  // backdrop-filter: blur(666px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+}
+
 // 背景装饰
 .background-decoration {
   position: absolute;
