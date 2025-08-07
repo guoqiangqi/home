@@ -518,13 +518,19 @@ export const twikooUtils = {
       
       console.log('获取到地点信息:', locationText);
       
-      // 查找所有可能的评论容器
+      // 首先检查是否在twikoo容器内
+      const twikooContainer = document.getElementById('twikoo');
+      if (!twikooContainer) {
+        console.log('未找到twikoo容器，跳过添加地点信息');
+        return;
+      }
+      
+      // 更严格的评论选择器，只在twikoo容器内查找
       const selectors = [
-        '.tk-comment',
-        '.twikoo-comment',
-        '.twikoo .tk-comment',
-        '.twikoo .twikoo-comment',
-        '[class*="comment"]'
+        '#twikoo .tk-comment',
+        '#twikoo .twikoo-comment',
+        '#twikoo .tk-comment .tk-comment',
+        '#twikoo .twikoo-comment .twikoo-comment'
       ];
       
       let comments = [];
@@ -536,19 +542,61 @@ export const twikooUtils = {
         }
       }
       
+      // 如果没找到，尝试更宽松的选择器，但仍然限制在twikoo容器内
       if (comments.length === 0) {
-        console.log('未找到任何评论，尝试查找所有可能的评论元素...');
-        // 查找所有可能包含评论的元素
-        const allElements = document.querySelectorAll('*');
+        console.log('使用更宽松的选择器查找评论...');
+        const allElements = twikooContainer.querySelectorAll('*');
         comments = Array.from(allElements).filter(el => {
-          const text = el.textContent || '';
-          return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+          // 检查元素是否具有评论相关的类名
+          const hasCommentClass = el.classList && (
+            el.classList.contains('tk-comment') ||
+            el.classList.contains('twikoo-comment') ||
+            el.classList.contains('comment')
+          );
+          
+          // 检查元素是否包含时间信息
+          const hasTimeInfo = el.textContent && (
+            el.textContent.includes('分钟前') ||
+            el.textContent.includes('小时前') ||
+            el.textContent.includes('天前') ||
+            el.textContent.includes('刚刚')
+          );
+          
+          // 检查元素是否包含用户名（通常评论都有用户名）
+          const hasUsername = el.querySelector && (
+            el.querySelector('.tk-nick') ||
+            el.querySelector('.twikoo-nick') ||
+            el.querySelector('.nick') ||
+            el.querySelector('[class*="nick"]')
+          );
+          
+          // 检查元素是否包含评论内容
+          const hasContent = el.querySelector && (
+            el.querySelector('.tk-content') ||
+            el.querySelector('.twikoo-content') ||
+            el.querySelector('.content') ||
+            el.querySelector('[class*="content"]')
+          );
+          
+          // 必须是评论类名 + 时间信息 + (用户名或内容)
+          return hasCommentClass && hasTimeInfo && (hasUsername || hasContent);
         });
-        console.log('通过文本内容找到可能的评论元素:', comments.length);
+        console.log('通过严格筛选找到可能的评论元素:', comments.length);
       }
       
       comments.forEach((comment, index) => {
         console.log(`处理第${index + 1}个评论:`, comment);
+        
+        // 再次确认这是真正的评论元素
+        const isRealComment = comment.closest('#twikoo') && 
+                             (comment.classList.contains('tk-comment') ||
+                              comment.classList.contains('twikoo-comment') ||
+                              comment.classList.contains('comment'));
+        
+        if (!isRealComment) {
+          console.log(`第${index + 1}个元素不是真正的评论，跳过`);
+          return;
+        }
         
         // 检查是否已经有地点信息
         if (!comment.querySelector('.twikoo-location')) {
@@ -556,8 +604,8 @@ export const twikooUtils = {
           const timeSelectors = [
             '.tk-time',
             '.twikoo-time',
-            '[class*="time"]',
-            'span:contains("分钟前"), span:contains("小时前"), span:contains("天前")'
+            '.time',
+            '[class*="time"]'
           ];
           
           let timeElement = null;
@@ -571,7 +619,7 @@ export const twikooUtils = {
             const spans = comment.querySelectorAll('span');
             timeElement = Array.from(spans).find(span => {
               const text = span.textContent || '';
-              return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+              return text.includes('分钟前') || text.includes('小时前') || text.includes('天前') || text.includes('刚刚');
             });
           }
           
@@ -600,30 +648,7 @@ export const twikooUtils = {
             timeElement.parentNode.insertBefore(locationElement, timeElement.nextSibling);
             console.log(`为第${index + 1}个评论添加地点信息:`, locationText);
           } else {
-            console.log(`第${index + 1}个评论没有找到时间元素，尝试添加到评论末尾`);
-            
-            // 如果找不到时间元素，添加到评论末尾
-            const locationElement = document.createElement('div');
-            locationElement.className = 'twikoo-location';
-            locationElement.textContent = locationText;
-            locationElement.title = '点击查看详细位置';
-            locationElement.style.cssText = `
-              color: rgba(255, 255, 255, 0.7) !important;
-              font-size: 0.8rem !important;
-              font-weight: 400 !important;
-              margin-top: 8px !important;
-              padding: 4px 8px !important;
-              background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-              border-radius: 6px !important;
-              backdrop-filter: blur(5px) !important;
-              border: 1px solid rgba(102, 126, 234, 0.2) !important;
-              transition: all 0.3s ease !important;
-              cursor: pointer !important;
-              display: inline-block !important;
-            `;
-            
-            comment.appendChild(locationElement);
-            console.log(`为第${index + 1}个评论末尾添加地点信息:`, locationText);
+            console.log(`第${index + 1}个评论没有找到时间元素，跳过添加地点信息`);
           }
         } else {
           console.log(`第${index + 1}个评论已有地点信息`);
@@ -649,10 +674,35 @@ export const twikooUtils = {
             if (node.classList) {
               const isComment = node.classList.contains('tk-comment') || 
                                node.classList.contains('twikoo-comment') ||
-                               node.textContent?.includes('分钟前') ||
-                               node.textContent?.includes('小时前') ||
-                               node.textContent?.includes('天前');
-              if (isComment) {
+                               node.classList.contains('comment');
+              
+              // 检查是否在twikoo容器内
+              const isInTwikoo = node.closest('#twikoo');
+              
+              // 检查是否包含时间信息
+              const hasTimeInfo = node.textContent && (
+                node.textContent.includes('分钟前') ||
+                node.textContent.includes('小时前') ||
+                node.textContent.includes('天前') ||
+                node.textContent.includes('刚刚')
+              );
+              
+              // 检查是否包含用户名或内容
+              const hasUsername = node.querySelector && (
+                node.querySelector('.tk-nick') ||
+                node.querySelector('.twikoo-nick') ||
+                node.querySelector('.nick') ||
+                node.querySelector('[class*="nick"]')
+              );
+              
+              const hasContent = node.querySelector && (
+                node.querySelector('.tk-content') ||
+                node.querySelector('.twikoo-content') ||
+                node.querySelector('.content') ||
+                node.querySelector('[class*="content"]')
+              );
+              
+              if (isComment && isInTwikoo && hasTimeInfo && (hasUsername || hasContent)) {
                 newComments.push(node);
               }
             }
@@ -662,29 +712,57 @@ export const twikooUtils = {
               const selectors = [
                 '.tk-comment',
                 '.twikoo-comment',
-                '[class*="comment"]'
+                '.comment'
               ];
               
               for (const selector of selectors) {
                 const foundComments = node.querySelectorAll(selector);
                 if (foundComments.length > 0) {
-                  newComments.push(...foundComments);
-                  break;
+                  // 过滤出真正的评论
+                  const realComments = Array.from(foundComments).filter(comment => {
+                    const isInTwikoo = comment.closest('#twikoo');
+                    const hasTimeInfo = comment.textContent && (
+                      comment.textContent.includes('分钟前') ||
+                      comment.textContent.includes('小时前') ||
+                      comment.textContent.includes('天前') ||
+                      comment.textContent.includes('刚刚')
+                    );
+                    const hasUsername = comment.querySelector && (
+                      comment.querySelector('.tk-nick') ||
+                      comment.querySelector('.twikoo-nick') ||
+                      comment.querySelector('.nick') ||
+                      comment.querySelector('[class*="nick"]')
+                    );
+                    const hasContent = comment.querySelector && (
+                      comment.querySelector('.tk-content') ||
+                      comment.querySelector('.twikoo-content') ||
+                      comment.querySelector('.content') ||
+                      comment.querySelector('[class*="content"]')
+                    );
+                    
+                    return isInTwikoo && hasTimeInfo && (hasUsername || hasContent);
+                  });
+                  
+                  if (realComments.length > 0) {
+                    newComments.push(...realComments);
+                    break;
+                  }
                 }
-              }
-              
-              // 如果没找到，尝试通过文本内容查找
-              if (newComments.length === 0) {
-                const allElements = node.querySelectorAll('*');
-                const commentElements = Array.from(allElements).filter(el => {
-                  const text = el.textContent || '';
-                  return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
-                });
-                newComments.push(...commentElements);
               }
             }
             
             newComments.forEach(async (comment) => {
+              // 再次确认这是真正的评论元素
+              const isRealComment = comment.closest('#twikoo') && 
+                                   (comment.classList.contains('tk-comment') ||
+                                    comment.classList.contains('twikoo-comment') ||
+                                    comment.classList.contains('comment'));
+              
+              if (!isRealComment) {
+                console.log('新添加的元素不是真正的评论，跳过');
+                return;
+              }
+              
               if (!comment.querySelector('.twikoo-location')) {
                 try {
                   const { getFormattedLocation } = await import('@/utils/location.js');
@@ -694,6 +772,7 @@ export const twikooUtils = {
                   const timeSelectors = [
                     '.tk-time',
                     '.twikoo-time',
+                    '.time',
                     '[class*="time"]'
                   ];
                   
@@ -708,7 +787,7 @@ export const twikooUtils = {
                     const spans = comment.querySelectorAll('span');
                     timeElement = Array.from(spans).find(span => {
                       const text = span.textContent || '';
-                      return text.includes('分钟前') || text.includes('小时前') || text.includes('天前');
+                      return text.includes('分钟前') || text.includes('小时前') || text.includes('天前') || text.includes('刚刚');
                     });
                   }
                   
@@ -734,28 +813,7 @@ export const twikooUtils = {
                     timeElement.parentNode.insertBefore(locationElement, timeElement.nextSibling);
                     console.log('为新评论添加地点信息:', locationText);
                   } else {
-                    // 如果找不到时间元素，添加到评论末尾
-                    const locationElement = document.createElement('div');
-                    locationElement.className = 'twikoo-location';
-                    locationElement.textContent = locationText;
-                    locationElement.title = '点击查看详细位置';
-                    locationElement.style.cssText = `
-                      color: rgba(255, 255, 255, 0.7) !important;
-                      font-size: 0.8rem !important;
-                      font-weight: 400 !important;
-                      margin-top: 8px !important;
-                      padding: 4px 8px !important;
-                      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-                      border-radius: 6px !important;
-                      backdrop-filter: blur(5px) !important;
-                      border: 1px solid rgba(102, 126, 234, 0.2) !important;
-                      transition: all 0.3s ease !important;
-                      cursor: pointer !important;
-                      display: inline-block !important;
-                    `;
-                    
-                    comment.appendChild(locationElement);
-                    console.log('为新评论末尾添加地点信息:', locationText);
+                    console.log('新评论没有找到时间元素，跳过添加地点信息');
                   }
                 } catch (error) {
                   console.error('为新评论添加地点信息失败:', error);
