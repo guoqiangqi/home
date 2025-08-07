@@ -44,12 +44,10 @@ const initTwikoo = async () => {
   if (isTwikooInitialized) return;
   
   try {
-    console.log('开始初始化 Twikoo...');
     isTwikooInitialized = true;
     
     // 注入自定义样式
     twikooUtils.injectStyles(twikooStyles);
-    console.log('自定义样式已注入');
     
     // 配置回调函数
     const config = {
@@ -61,8 +59,6 @@ const initTwikoo = async () => {
         });
       }
     };
-    
-    console.log('Twikoo 配置:', config);
     
     // 等待DOM准备就绪
     await nextTick();
@@ -91,10 +87,8 @@ const initTwikoo = async () => {
     
     // 初始化 Twikoo
     twikooInstance = window.twikoo.init(config);
-    console.log('Twikoo 初始化成功');
     
   } catch (error) {
-    console.error('Twikoo 初始化失败:', error);
     ElMessage({
       message: '评论系统暂时不可用，请稍后再试。',
       type: 'warning',
