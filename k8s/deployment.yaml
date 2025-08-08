@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: home-app
-        image: home-app:latest
-        imagePullPolicy: Never  # 使用本地镜像
+        image: guoqiangqi/home-app:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         resources:

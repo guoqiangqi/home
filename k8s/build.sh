@@ -7,6 +7,7 @@ echo "开始构建 Docker 镜像..."
 mkdir -p temp-build
 cp -r ../dist temp-build/
 cp Dockerfile temp-build/
+cp nginx.conf temp-build/
 
 # 构建 Docker 镜像
 echo "构建 guoqiangqi/home-app:latest 镜像..."
