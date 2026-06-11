@@ -10,37 +10,36 @@
   
   <!-- 主界面 -->
   <Transition name="fade" mode="out-in">
-    <main id="main" v-if="store.imgLoadStatus">
+    <main id="main" :class="{ 'space-active': !showMainPage }" v-if="store.imgLoadStatus">
       <!-- 太空欢迎页面 -->
       <div v-if="!showMainPage" class="space-welcome">
         <div class="space-content">
-          <div class="space-header">
-            <h1 class="space-title">你好呀，欢迎来到我的乐园<span class="clap-icon" title="鼓掌">👏</span></h1>
-            <div class="astronaut">👨‍🚀</div>
-          </div>
-          
-
-          
-          <div class="space-mission">
-            <div class="space-elements">
-              <span class="space-element">🚀</span>
-              <span class="space-element">🛸</span>
-              <span class="space-element">🛰️</span>
-              <span class="space-element">☄️</span>
-              <span class="space-element">🌌</span>
-            </div>
-          </div>
-          
-          <div class="scroll-hint">
-            <div class="scroll-text">向下滚动开始探索</div>
-            <div class="scroll-arrow-container">
-              <div class="scroll-arrow"></div>
-              <div class="scroll-arrow scroll-arrow-2"></div>
-              <div class="scroll-arrow scroll-arrow-3"></div>
-            </div>
+          <div class="space-status">
+            <span class="status-dot"></span>
+            <span class="status-text">SYSTEM ONLINE</span>
+            <span class="status-divider">|</span>
+            <span class="status-coords">{{ currentCoords }}</span>
           </div>
         </div>
-        <!-- 滚动区域 -->
+
+        <div class="space-mission">
+          <div class="space-elements">
+            <span class="space-element el-1">🚀</span>
+            <span class="space-element el-2">🛸</span>
+            <span class="space-element el-3">🛰️</span>
+            <span class="space-element el-4">☄️</span>
+            <span class="space-element el-5">🌌</span>
+          </div>
+        </div>
+
+        <div class="scroll-hint">
+          <div class="scroll-text">向下滚动开始探索</div>
+          <div class="scroll-arrow-container">
+            <div class="scroll-arrow"></div>
+            <div class="scroll-arrow scroll-arrow-2"></div>
+          </div>
+        </div>
+
         <div class="scroll-area"></div>
       </div>
       
@@ -121,6 +120,21 @@ import config from "@/../package.json";
 const store = mainStore();
 const showMainPage = ref(false);
 const backgroundRef = ref(null);
+
+const currentCoords = ref("RA 14h 27m 04s · DEC +02° 12′ 47″");
+
+const updateCoords = () => {
+  const ra = (Math.random() * 24).toFixed(0).padStart(2, "0");
+  const raM = (Math.random() * 60).toFixed(0).padStart(2, "0");
+  const raS = (Math.random() * 60).toFixed(0).padStart(2, "0");
+  const dec = (Math.random() * 90).toFixed(0).padStart(2, "0");
+  const decM = (Math.random() * 60).toFixed(0).padStart(2, "0");
+  const decS = (Math.random() * 60).toFixed(0).padStart(2, "0");
+  const sign = Math.random() > 0.5 ? "+" : "-";
+  currentCoords.value = `RA ${ra}h ${raM}m ${raS}s · DEC ${sign}${dec}° ${decM}′ ${decS}″`;
+};
+
+let coordsInterval = null;
 
 // 页面宽度
 const getWidth = () => {
@@ -223,7 +237,9 @@ const handleUpdateLocalIndex = (index) => {
 };
 
 onMounted(() => {
-  // 自定义鼠标
+  updateCoords();
+  coordsInterval = setInterval(updateCoords, 8000);
+
   cursorInit();
 
   // 屏蔽右键
@@ -274,6 +290,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  if (coordsInterval) clearInterval(coordsInterval);
   window.removeEventListener("resize", getWidth);
   window.removeEventListener("scroll", handleScroll);
   window.removeEventListener("wheel", handleWheel);
@@ -293,6 +310,11 @@ onBeforeUnmount(() => {
   transition: transform 0.3s;
   animation: fade-blur-main-in 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-delay: 0.5s;
+
+  &.space-active {
+    transform: scale(1);
+    animation: spaceFadeIn 1.2s ease-out forwards;
+  }
 }
 
 // 太空欢迎页面
@@ -305,173 +327,118 @@ onBeforeUnmount(() => {
 
   .space-content {
     position: fixed;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     color: white;
     z-index: 11;
-    max-width: 800px;
-    width: 100%;
-    padding: 0 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-  
-  .space-header {
-    margin-bottom: 3rem;
-    animation: fadeInDown 1s ease-out;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    .astronaut {
-      font-size: 2.5rem;
-      margin-bottom: 0.8rem;
-      margin-top: 4rem;
-      animation: astronautFloat 4s ease-in-out infinite;
-      display: block;
-      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-      opacity: 0.9;
-    }
-    
+    pointer-events: none;
 
-    
-    .space-title {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      margin-bottom: 1.5rem;
-      margin-top: -16rem;
-      font-style: italic;
-      text-shadow: 0 0 20px rgba(255,255,255,0.5);
-      background: linear-gradient(45deg, #fff, #87CEEB, #fff);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientShift 3s ease-in-out infinite;
-      
-      .clap-icon {
-        display: inline-block;
-        font-size: 1.2em;
-        margin-left: 0.3em;
-        animation: clapAnimation 2s ease-in-out infinite;
-        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
-        -webkit-text-fill-color: initial;
-        background: none;
-        -webkit-background-clip: initial;
-      }
+  .space-status {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    color: rgba(135, 206, 235, 0.45);
+    font-family: "UnidreamLED", monospace;
+    animation: statusFade 6s ease-in-out infinite;
+    white-space: nowrap;
+
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(78, 205, 196, 0.7);
+      box-shadow: 0 0 6px rgba(78, 205, 196, 0.5);
+      animation: statusPulse 3s ease-in-out infinite;
     }
-    
-    .space-subtitle {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      color: #ccc;
-      opacity: 0.9;
+
+    .status-divider {
+      opacity: 0.25;
+    }
+
+    .status-coords {
+      opacity: 0.4;
+      font-size: 0.65rem;
     }
   }
-  
 
-  
-  .space-mission {
-    margin-bottom: 18rem;
-    animation: fadeInUp 1s ease-out 0.5s both;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
+}
 
-    
-    .space-elements {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 4rem;
-      margin-bottom: 2rem;
-      margin-top: 2rem;
-      width: 100%;
-      max-width: 600px;
-      
-      .space-element {
-        font-size: 2rem;
-        animation: elementFloat 4s ease-in-out infinite;
-        opacity: 0.9;
-        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
-        transition: all 0.3s ease;
-        
-        &:hover {
-          transform: scale(1.2) rotate(5deg);
-          filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
-        }
-        
-        &:nth-child(1) { animation-delay: 0s; }
-        &:nth-child(2) { animation-delay: 0.8s; }
-        &:nth-child(3) { animation-delay: 1.6s; }
-        &:nth-child(4) { animation-delay: 2.4s; }
-        &:nth-child(5) { animation-delay: 3.2s; }
-      }
+.space-mission {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9;
+
+  .space-elements {
+    position: absolute;
+    inset: 0;
+
+    .space-element {
+      position: absolute;
+      font-size: 1.6rem;
+      animation: elementFloat 6s ease-in-out infinite;
+      opacity: 0.18;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.08));
+
+      &.el-1 { top: 6%; left: 2%; animation-delay: 0s; }
+      &.el-2 { top: 18%; right: 2%; animation-delay: 1.2s; }
+      &.el-3 { top: 72%; left: 1%; animation-delay: 2.4s; }
+      &.el-4 { bottom: 12%; right: 2%; animation-delay: 0.6s; }
+      &.el-5 { bottom: 28%; left: 3%; animation-delay: 1.8s; }
     }
-    
-
   }
-  
-  .scroll-hint {
+}
+
+.scroll-hint {
+  position: fixed;
+  bottom: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  animation: hintFade 5s ease-in-out infinite;
+
+  .scroll-text {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+  }
+
+  .scroll-arrow-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    animation: fadeInUp 1s ease-out 1s both;
-    position: relative;
-    
-    .scroll-text {
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 9rem;
-      margin-top: -1rem;
-      opacity: 0.65;
-      text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
-      font-weight: 420;
-      letter-spacing: 0.6px;
-      animation: textGlow 3s ease-in-out infinite;
-    }
-    
-    .scroll-arrow-container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 1rem;
-      margin-top: -7rem;
-    }
-    
-    .scroll-arrow {
-      width: 18px;
-      height: 18px;
-      border-right: 2.5px solid rgba(255, 255, 255, 0.7);
-      border-bottom: 2.5px solid rgba(255, 255, 255, 0.7);
-      transform: rotate(45deg);
-      animation: bounce 2.5s infinite;
-      opacity: 0.65;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-      
-      &.scroll-arrow-2 {
-        width: 14px;
-        height: 14px;
-        border-right: 2px solid rgba(135, 206, 235, 0.6);
-        border-bottom: 2px solid rgba(135, 206, 235, 0.6);
-        animation-delay: 0.3s;
-        opacity: 0.5;
-      }
-      
-      &.scroll-arrow-3 {
-        width: 10px;
-        height: 10px;
-        border-right: 1.5px solid rgba(74, 144, 226, 0.5);
-        border-bottom: 1.5px solid rgba(74, 144, 226, 0.5);
-        animation-delay: 0.6s;
-        opacity: 0.4;
-      }
+    gap: 4px;
+  }
+
+  .scroll-arrow {
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.2);
+    transform: rotate(45deg);
+    animation: hintBounce 3s ease-in-out infinite;
+
+    &.scroll-arrow-2 {
+      width: 6px;
+      height: 6px;
+      border-right: 1px solid rgba(135, 206, 235, 0.15);
+      border-bottom: 1px solid rgba(135, 206, 235, 0.15);
+      animation-delay: 0.4s;
     }
   }
 }
@@ -495,17 +462,6 @@ onBeforeUnmount(() => {
   50% { 
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 16px rgba(135, 206, 235, 0.35);
     transform: scale(1.02);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -548,24 +504,30 @@ onBeforeUnmount(() => {
   }
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes hintFade {
+  0%, 100% { opacity: 0.18; }
+  50% { opacity: 0.42; }
 }
 
-@keyframes astronautFloat {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg); 
-  }
-  25% { 
-    transform: translateY(-15px) rotate(5deg); 
-  }
-  50% { 
-    transform: translateY(-25px) rotate(0deg); 
-  }
-  75% { 
-    transform: translateY(-15px) rotate(-5deg); 
-  }
+@keyframes hintBounce {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(3px) rotate(45deg); }
+}
+
+
+@keyframes statusFade {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.65; }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes spaceFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes elementFloat {
@@ -583,48 +545,20 @@ onBeforeUnmount(() => {
   }
 }
 
-@keyframes clapAnimation {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-  }
-  25% { 
-    transform: scale(1.1) rotate(5deg); 
-  }
-  50% { 
-    transform: scale(1.2) rotate(0deg); 
-  }
-  75% { 
-    transform: scale(1.1) rotate(-5deg); 
-  }
-}
-
 // 响应式设计
 @media (max-width: 768px) {
   .space-content {
     padding: 0 1rem;
-    
-    .space-header {
-      .astronaut {
-        font-size: 2.5rem;
-        margin-top: 1.5rem;
-      }
-      
 
-      
-      .space-title {
-        font-size: 1.2rem;
-        
-        .clap-icon {
-          font-size: 1.1em;
-          margin-left: 0.2em;
-        }
-      }
-      
-      .space-subtitle {
-        font-size: 1rem;
+    .space-status {
+      top: 1rem;
+      font-size: 0.6rem;
+
+      .status-coords {
+        display: none;
       }
     }
-    
+
     .space-features {
       flex-direction: column;
       gap: 0.5rem;
@@ -642,51 +576,17 @@ onBeforeUnmount(() => {
       }
     }
     
-    .space-mission {
-      margin-bottom: 12rem;
-      
-      .space-elements {
-        gap: 1rem;
-        max-width: 400px;
-        margin-top: 1.5rem;
-        
-        .space-element {
-          font-size: 1.5rem;
-        }
-      }
-      
-
+    .space-mission .space-elements .space-element {
+      font-size: 1.3rem;
+      opacity: 0.22;
     }
-    
-    .scroll-hint {
-      .scroll-text {
-        font-size: 1rem;
-        margin-bottom: 3rem;
-        margin-top: -0.5rem;
-      }
-      
-      .scroll-arrow-container {
-        gap: 6px;
-        margin-bottom: 0.5rem;
-        margin-top: -4rem;
-      }
-      
-      .scroll-arrow {
-        width: 16px;
-        height: 16px;
-        
-        &.scroll-arrow-2 {
-          width: 12px;
-          height: 12px;
-        }
-        
-        &.scroll-arrow-3 {
-          width: 8px;
-          height: 8px;
-        }
-      }
-      
+  }
 
+  .scroll-hint {
+    bottom: 0.8rem;
+
+    .scroll-text {
+      font-size: 0.7rem;
     }
   }
 }

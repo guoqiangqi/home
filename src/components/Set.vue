@@ -87,7 +87,24 @@
         </div>
       </el-collapse-item>
       <el-collapse-item title="其他设置" name="5">
-        <div>设置内容待增加</div>
+        <div class="item">
+          <span class="text">跳过太空欢迎页</span>
+          <el-switch
+            v-model="skipSpaceWelcome"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
+        </div>
+        <div class="item">
+          <span class="text">返回太空页提示</span>
+          <el-switch
+            v-model="returnHintShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
+        </div>
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -109,6 +126,8 @@ const {
   playerAutoplay,
   playerOrder,
   playerLoop,
+  returnHintShow,
+  skipSpaceWelcome,
 } = storeToRefs(store);
 
 // 默认选中项
