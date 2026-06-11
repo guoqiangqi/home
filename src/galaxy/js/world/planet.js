@@ -47,6 +47,7 @@ export default class Planet {
       atmosphereTwilightColor: '#3c40e1',
       atmosphereIntensity: 3.0,
       atmosphereThickness: 1.5,
+      atmosphereTwilightStrength: 1.0,
       // 自转属性
       rotationSpeed: {
         x: 0.2,
@@ -158,6 +159,7 @@ export default class Planet {
         uAtmosphereTwilightColor: { value: new THREE.Color(this.params.atmosphereTwilightColor) },
         uAtmosphereIntensity: { value: this.params.atmosphereIntensity },
         uAtmosphereThickness: { value: this.params.atmosphereThickness },
+        uTwilightStrength: { value: this.params.atmosphereTwilightStrength },
       },
       transparent: true,
       blending: THREE.AdditiveBlending,
@@ -440,6 +442,7 @@ export default class Planet {
       this.atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value = new THREE.Color(this.params.atmosphereTwilightColor)
       this.atmosphereMaterial.uniforms.uAtmosphereIntensity.value = this.params.atmosphereIntensity
       this.atmosphereMaterial.uniforms.uAtmosphereThickness.value = this.params.atmosphereThickness
+      this.atmosphereMaterial.uniforms.uTwilightStrength.value = this.params.atmosphereTwilightStrength
       this.atmosphereMaterial.uniforms.uPointLightPosition.value.set(
         this.params.pointLightPosition.x,
         0,

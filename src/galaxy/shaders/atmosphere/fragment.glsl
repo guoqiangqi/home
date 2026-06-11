@@ -4,51 +4,36 @@ uniform vec3 uAtmosphereDayColor;
 uniform vec3 uAtmosphereTwilightColor;
 uniform float uAtmosphereIntensity;
 uniform float uAtmosphereThickness;
-uniform float uTwilightMin;
-uniform float uTwilightMax;
+uniform float uTwilightStrength;
 
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vPosition;
 
 void main() {
-  // 计算从大气层到光源的方向
   vec3 lightDirection = normalize(uPointLightPosition - vPosition);
-  
-  // 计算视角方向
   vec3 viewDirection = normalize(vPosition - cameraPosition);
-  
-  // 计算法线向量
   vec3 normal = normalize(vNormal);
-  
-  // 计算光照角度 (太阳高度角)
-  float sunAngle = dot(normal, lightDirection);
-  
-  // 计算视角与法线的夹角 (大气厚度因子)
-  float viewAngle = max(dot(normal, viewDirection), 0.0);
 
-  // 边缘大气效果 (菲涅尔效应)
+  float sunAngle = dot(normal, lightDirection);
+  float viewAngle = max(dot(normal, viewDirection), 0.0);
   float atmosphereStrength = pow(viewAngle, uAtmosphereThickness) * uAtmosphereIntensity;
-  
-//   根据太阳角度决定大气颜色
+
   vec3 atmosphereColor;
-  float alpha = 0.0;
-  
-  if (sunAngle > uTwilightMax) {
+  const float twilightEdge = 0.07;
+
+  if (sunAngle > twilightEdge) {
     atmosphereColor = uAtmosphereDayColor;
-    alpha = atmosphereStrength;
-  } else if (sunAngle > uTwilightMin) {
-    float twilightRange = max(uTwilightMax - uTwilightMin, 0.001);
-    float twilightFactor = (sunAngle - uTwilightMin) / twilightRange;
+  } else if (sunAngle > -twilightEdge) {
+    float twilightFactor = (sunAngle + twilightEdge) / (twilightEdge * 2.0);
     atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereDayColor, twilightFactor);
-    alpha = atmosphereStrength * mix(0.55, 1.0, twilightFactor);
+    atmosphereStrength *= mix(0.24 * uTwilightStrength, 1.0, twilightFactor);
   } else {
-    // 夜晚：无大气效果
     atmosphereColor = vec3(0.0);
-    alpha = 0.1;
+    atmosphereStrength *= 0.06;
   }
-    // 输出最终颜色，使用 alpha 通道控制透明度
-    gl_FragColor = vec4(atmosphereColor, atmosphereStrength);
-    #include <tonemapping_fragment>
-    #include <colorspace_fragment>
+
+  gl_FragColor = vec4(atmosphereColor, atmosphereStrength);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
 }
