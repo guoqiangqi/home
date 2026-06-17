@@ -4,6 +4,7 @@ export const mainStore = defineStore("main", {
   state: () => {
     return {
       imgLoadStatus: false, // 壁纸加载状态
+      splashDone: false, // 首次加载流转页是否已结束
       innerWidth: null, // 当前窗口宽度
       coverType: "0", // 壁纸种类
       siteStartShow: false, // 建站日期显示
@@ -77,6 +78,10 @@ export const mainStore = defineStore("main", {
     // 更改壁纸加载状态
     setImgLoadStatus(value) {
       this.imgLoadStatus = value;
+    },
+    // 标记首次加载流转页已结束
+    setSplashDone(value) {
+      this.splashDone = value;
     },
   },
   persist: {

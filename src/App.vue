@@ -2,8 +2,8 @@
   <!-- 太空背景 -->
   <SpaceBackground v-if="!showMainPage" />
   
-  <!-- 加载 -->
-  <Loading />
+  <!-- 加载（仅首次进入） -->
+  <Loading v-if="!store.splashDone" />
   
   <!-- 壁纸 -->
   <Background ref="backgroundRef" @loadComplete="loadComplete" />

@@ -1,5 +1,9 @@
 <template>
-  <div id="loader-wrapper" :class="store.imgLoadStatus ? 'loaded' : null">
+  <div
+    id="loader-wrapper"
+    :class="store.imgLoadStatus ? 'loaded' : null"
+    @transitionend="onTransitionEnd"
+  >
     <div class="loader">
       <div class="space-rhythm">
         <div class="rhythm-wave wave-1" />
@@ -45,6 +49,12 @@
 import { mainStore } from "@/store";
 
 const store = mainStore();
+
+const onTransitionEnd = (event) => {
+  if (event.propertyName === "transform" && store.imgLoadStatus) {
+    store.setSplashDone(true);
+  }
+};
 
 // 配置
 const siteName = import.meta.env.VITE_SITE_NAME;

@@ -33,6 +33,8 @@ const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
 const loadingStartTime = ref(0);
+const isFirstLoad = ref(true);
+const hasEmittedLoadComplete = ref(false);
 const MIN_LOADING_MS = 2600;
 const emit = defineEmits(["loadComplete"]);
 
@@ -54,16 +56,21 @@ const changeBg = (type) => {
 
 // 图片加载完成
 const imgLoadComplete = () => {
+  if (!isFirstLoad.value) return;
+
   const elapsed = Date.now() - loadingStartTime.value;
   const minWait = Math.max(0, MIN_LOADING_MS - elapsed);
   const jitter = Math.floor(Math.random() * 400) + 200;
   imgTimeout.value = setTimeout(() => {
     store.setImgLoadStatus(true);
+    isFirstLoad.value = false;
   }, minWait + jitter);
 };
 
 // 图片动画完成
 const imgAnimationEnd = () => {
+  if (hasEmittedLoadComplete.value) return;
+  hasEmittedLoadComplete.value = true;
   console.log("壁纸加载且动画完成");
   // 加载完成事件
   emit("loadComplete");
@@ -103,10 +110,7 @@ const setLocalBackgroundIndex = (index) => {
 watch(
   () => store.coverType,
   (value) => {
-    loadingStartTime.value = Date.now();
     changeBg(value);
-    // 重置加载状态以确保新背景能正确加载
-    store.setImgLoadStatus(false);
   },
 );
 
@@ -115,12 +119,9 @@ watch(
   () => currentLocalBgIndex.value,
   (newIndex) => {
     if (store.coverType === "0") {
-      loadingStartTime.value = Date.now();
       const newBgUrl = `/images/background${newIndex}.jpg`;
       console.log(`切换到本地壁纸: ${newBgUrl}`);
       bgUrl.value = newBgUrl;
-      // 重置加载状态以确保新背景能正确加载
-      store.setImgLoadStatus(false);
     }
   },
 );
