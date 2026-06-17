@@ -201,8 +201,8 @@ const barHeights = [14, 22, 28, 22, 14];
           background-clip: text;
           color: transparent;
           opacity: 0;
-          animation: charBounce 2.6s ease-in-out infinite;
-          animation-delay: calc(var(--char-i) * 0.18s);
+          animation: charBounce 4s ease-in-out infinite;
+          animation-delay: calc(var(--char-i) * 0.2s);
         }
       }
     }
@@ -225,8 +225,8 @@ const barHeights = [14, 22, 28, 22, 14];
     visibility: hidden;
     transform: translateY(-100%);
     transition:
-      transform 0.3s 1s ease-out,
-      visibility 0.3s 1s ease-out;
+      transform 0.3s 1.5s ease-out,
+      visibility 0.3s 1.5s ease-out;
     .loader {
       .space-rhythm,
       .loader-text {
@@ -322,25 +322,25 @@ const barHeights = [14, 22, 28, 22, 14];
     opacity: 0;
     transform: translateY(8px) scale(0.75);
   }
-  6% {
+  5% {
     opacity: 1;
     transform: translateY(-9px) scale(1.06);
   }
-  12% {
+  10% {
     transform: translateY(3px) scale(0.97);
   }
-  18%,
-  72% {
+  15%,
+  80% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-  80% {
+  86% {
     transform: translateY(-4px) scale(1.02);
   }
-  88% {
+  92% {
     transform: translateY(0) scale(1);
   }
-  96% {
+  97% {
     opacity: 0;
     transform: translateY(5px) scale(0.9);
   }
