@@ -8,6 +8,9 @@ import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "swiper/css";
 // 字体初始化
 import { initLogoFont } from "@/utils/fontInit";
+import { preloadCriticalAssets } from "@/utils/preloadAssets";
+
+preloadCriticalAssets();
 
 const app = createApp(App);
 const pinia = createPinia();

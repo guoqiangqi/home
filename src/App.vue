@@ -1,22 +1,42 @@
 <template>
   <!-- 太空背景 -->
-  <SpaceBackground v-if="!showMainPage" />
+  <SpaceBackground
+    v-if="!showMainPage"
+    :class="{
+      'is-revealing': spaceRevealing,
+      'splash-dimmed': !store.splashDone && !spaceRevealing,
+    }"
+  />
   
   <!-- 加载（仅首次进入） -->
-  <Loading v-if="!store.splashDone" />
+  <Loading v-if="!store.splashDone" @exit-start="onSplashExitStart" />
   
   <!-- 壁纸 -->
   <Background ref="backgroundRef" @loadComplete="loadComplete" />
   
   <!-- 主界面 -->
   <Transition name="fade" mode="out-in">
-    <main id="main" :class="{ 'space-active': !showMainPage }" v-if="store.imgLoadStatus">
+    <main
+      id="main"
+      :class="{
+        'space-active': !showMainPage,
+        'splash-pending': !store.splashDone,
+      }"
+      v-if="store.imgLoadStatus"
+    >
       <!-- 太空欢迎页面 -->
-      <div v-if="!showMainPage" class="space-welcome">
+      <div
+        v-if="!showMainPage"
+        class="space-welcome"
+        :class="{
+          'splash-hidden': !store.splashDone && !spaceRevealing,
+          'is-revealing': spaceRevealing,
+        }"
+      >
         <div class="space-content">
           <div class="space-status">
             <span class="status-dot"></span>
-            <span class="status-text">SYSTEM ONLINE</span>
+            <span class="status-text">{{ spaceStatusText }}</span>
             <span class="status-divider">|</span>
             <span class="status-coords">{{ currentCoords }}</span>
           </div>
@@ -97,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, nextTick, watch, onBeforeUnmount } from 'vue';
 import { ElMessage } from 'element-plus';
 import { helloInit, checkDays } from "@/utils/getTime.js";
 import { HamburgerButton, CloseSmall } from "@icon-park/vue-next";
@@ -120,6 +140,20 @@ import config from "@/../package.json";
 const store = mainStore();
 const showMainPage = ref(false);
 const backgroundRef = ref(null);
+const spaceRevealing = ref(false);
+const warpLanded = ref(false);
+
+const spaceStatusText = computed(() => {
+  if (spaceRevealing.value && !warpLanded.value) return "WARP IN PROGRESS";
+  return "SYSTEM ONLINE";
+});
+
+const onSplashExitStart = () => {
+  spaceRevealing.value = true;
+  setTimeout(() => {
+    warpLanded.value = true;
+  }, 2200);
+};
 
 const currentCoords = ref("RA 14h 27m 04s · DEC +02° 12′ 47″");
 
@@ -311,9 +345,22 @@ onBeforeUnmount(() => {
   animation: fade-blur-main-in 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-delay: 0.5s;
 
+  &.splash-pending {
+    animation: none;
+    transform: scale(1);
+    opacity: 1;
+  }
+
   &.space-active {
     transform: scale(1);
-    animation: spaceFadeIn 1.2s ease-out forwards;
+
+    &:not(.splash-pending) {
+      animation: spaceFadeIn 1.2s ease-out forwards;
+    }
+  }
+
+  &.space-active.splash-pending {
+    animation: none;
   }
 }
 
@@ -323,6 +370,37 @@ onBeforeUnmount(() => {
   width: 100%;
   min-height: 200vh;
   z-index: 10;
+
+  .space-content,
+  .space-mission,
+  .scroll-hint {
+    transition: none;
+  }
+
+  &.splash-hidden {
+    .space-content,
+    .space-mission,
+    .scroll-hint {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  &.is-revealing {
+    .space-content {
+      animation: spaceUiReveal 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.8s forwards;
+    }
+
+    .space-mission {
+      animation: spaceUiReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
+    }
+
+    .scroll-hint {
+      animation:
+        spaceUiReveal 1s cubic-bezier(0.22, 1, 0.36, 1) 1.2s forwards,
+        hintFade 5s ease-in-out 2.2s infinite;
+    }
+  }
 }
 
   .space-content {
@@ -528,6 +606,17 @@ onBeforeUnmount(() => {
 @keyframes spaceFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes spaceUiReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes elementFloat {

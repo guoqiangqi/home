@@ -128,7 +128,6 @@ watch(
 
 onMounted(() => {
   loadingStartTime.value = Date.now();
-  // 加载壁纸
   changeBg(store.coverType);
 });
 

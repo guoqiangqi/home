@@ -35,6 +35,32 @@ onBeforeUnmount(() => {
   overflow: hidden;
   background: #000012;
   pointer-events: none;
+  filter: brightness(1);
+  transform: scale(1);
+  transition: filter 1.4s ease-out;
+
+  &.splash-dimmed {
+    filter: brightness(0.72) saturate(0.85);
+  }
+
+  &.is-revealing {
+    animation: warpLand 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+}
+
+@keyframes warpLand {
+  0% {
+    transform: scale(1.18);
+    filter: brightness(1.8) blur(6px) saturate(1.4);
+  }
+  45% {
+    transform: scale(1.04);
+    filter: brightness(1.2) blur(2px) saturate(1.1);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) blur(0) saturate(1);
+  }
 }
 
 .galaxy-canvas {
