@@ -35,7 +35,7 @@ const imgTimeout = ref(null);
 const loadingStartTime = ref(0);
 const isFirstLoad = ref(true);
 const hasEmittedLoadComplete = ref(false);
-const MIN_LOADING_MS = 2600;
+const MIN_LOADING_MS = 6500;
 const emit = defineEmits(["loadComplete"]);
 
 // 当前本地壁纸编号 (1-10)
