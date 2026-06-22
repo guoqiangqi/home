@@ -44,18 +44,18 @@ onBeforeUnmount(() => {
   }
 
   &.is-revealing {
-    animation: warpLand 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: warpLand 2.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 }
 
 @keyframes warpLand {
   0% {
-    transform: scale(1.18);
-    filter: brightness(1.8) blur(6px) saturate(1.4);
+    transform: scale(1.02);
+    filter: brightness(0.82) blur(2px) saturate(0.9);
   }
-  45% {
-    transform: scale(1.04);
-    filter: brightness(1.2) blur(2px) saturate(1.1);
+  50% {
+    transform: scale(1.03);
+    filter: brightness(1.05) blur(1px) saturate(1);
   }
   100% {
     transform: scale(1);

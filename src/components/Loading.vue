@@ -7,15 +7,15 @@
     <div class="loader">
       <div class="galaxy-bg" :class="{ 'galaxy-warp': isExiting }">
         <Galaxy
-          :mouse-repulsion="!isExiting"
-          :mouse-interaction="!isExiting"
+          :mouse-repulsion="true"
+          :mouse-interaction="true"
           :density="1.4"
           :glow-intensity="0.45"
           :saturation="0.65"
           :hue-shift="220"
           :twinkle-intensity="0.4"
-          :star-speed="isExiting ? 1.2 : 0.25"
-          :speed="isExiting ? 2.5 : 0.5"
+          :star-speed="0.25"
+          :speed="0.5"
           :rotation-speed="0.04"
           :transparent="false"
         />
@@ -28,17 +28,17 @@
           :class="{ 'aurora-traverse': isExiting }"
         >
           <SoftAurora
-            :speed="isExiting ? 0.8 : 0.3"
+            :speed="0.3"
             :scale="1.5"
-            :brightness="isExiting ? 1.1 : 0.85"
+            :brightness="0.85"
             color1="#c8e6ff"
             color2="#7b5cff"
             :noise-frequency="2.5"
             :noise-amplitude="1.0"
             :band-height="0.45"
             :band-spread="1.0"
-            :color-speed="isExiting ? 1 : 0.5"
-            :enable-mouse-interaction="!isExiting"
+            :color-speed="0.5"
+            :enable-mouse-interaction="true"
             :mouse-influence="0.2"
           />
         </div>
@@ -155,12 +155,15 @@ onBeforeUnmount(() => {
     pointer-events: none;
     mix-blend-mode: screen;
     transition:
-      opacity 1.4s ease-out 0.4s,
-      filter 1.2s ease-out;
+      opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1.4s ease-out;
 
     &.aurora-traverse {
       opacity: 0;
-      filter: blur(6px) brightness(1.3);
+      filter: blur(4px);
+      transition:
+        opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 1.4s ease-out;
     }
   }
 
@@ -175,12 +178,12 @@ onBeforeUnmount(() => {
     position: absolute;
     inset: 0;
     background: radial-gradient(
-      ellipse 28% 62% at 50% 50%,
-      transparent 38%,
-      rgba(5, 5, 16, 0.5) 65%,
-      rgba(5, 5, 16, 0.92) 100%
+      ellipse 32% 68% at 50% 50%,
+      transparent 42%,
+      rgba(5, 5, 16, 0.35) 68%,
+      rgba(5, 5, 16, 0.65) 100%
     );
-    animation: vignetteDisperse 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: vignetteDisperse 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
   &.loaded {
@@ -202,8 +205,12 @@ onBeforeUnmount(() => {
 
 @keyframes vignetteDisperse {
   0% {
-    opacity: 1;
-    transform: scale(1);
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  12% {
+    opacity: 0.45;
+    transform: scale(1.1);
   }
   100% {
     opacity: 0;
