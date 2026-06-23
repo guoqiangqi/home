@@ -440,48 +440,47 @@ scrollbar-thumb {
 }
 
 // 相册日期选择器输入框深色适配（全局，避免 Element 默认白底）
-// 注意：el-date-picker 不会把自定义 class（date-picker）透传到根元素，
-// 因此这里统一用 Element 必然存在的 .el-date-editor 作为锚点。
+// 关键：el-date-picker(type=date) 的边框元素是 .el-date-editor.el-input__wrapper
+// （两个 class 在同一个元素上），而不是 .el-date-editor 下的后代 .el-input__wrapper。
+// 因此统一用 .album-container .el-input__wrapper 来命中真正带边框的元素（相册内只有这一个输入框）。
 .album-container .el-date-editor {
-  // Element 的输入框“边框”是用 box-shadow 配合这些变量绘制的。
-  // 把这些变量直接定义在 .el-date-editor 上（优先级高于 Element 自身的 .el-input 定义），
-  // 全部中和为透明，可保证默认/hover/focus/is-active 任意状态都不出现描边。
+  // 双保险：把边框相关变量全部中和为透明
   --el-input-bg-color: transparent;
   --el-fill-color-blank: transparent;
   --el-input-border-color: transparent;
   --el-input-hover-border-color: transparent;
   --el-input-focus-border-color: transparent;
   --el-input-focus-color: transparent;
+}
 
-  .el-input__wrapper,
-  .el-input__wrapper:hover,
-  .el-input__wrapper.is-focus,
-  &.is-active .el-input__wrapper,
-  .el-input.is-active .el-input__wrapper {
-    background-color: rgba(255, 255, 255, 0.04) !important;
-    backdrop-filter: blur(8px);
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    border-radius: 30px !important;
-    transition: background-color 0.25s ease;
+.album-container .el-input__wrapper,
+.album-container .el-input__wrapper:hover,
+.album-container .el-input__wrapper.is-focus,
+.album-container .el-input__wrapper.is-active {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 30px !important;
+  transition: background-color 0.25s ease;
+}
+
+.album-container .el-input__wrapper:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.album-container .el-input__inner {
+  color: #fff !important;
+  background: transparent !important;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
   }
+}
 
-  .el-input__wrapper:hover {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-  }
-
-  .el-input__inner {
-    color: #fff !important;
-    background: transparent !important;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.4) !important;
-    }
-  }
-
-  .el-input__prefix,
-  .el-input__suffix {
-    color: rgba(255, 255, 255, 0.5) !important;
-  }
+.album-container .el-input__prefix,
+.album-container .el-input__suffix {
+  color: rgba(255, 255, 255, 0.5) !important;
 }
