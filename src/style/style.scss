@@ -349,10 +349,34 @@ scrollbar-thumb {
       color: #4ecdc4 !important;
     }
 
-    // 今天
-    &.today .el-date-table-cell__text {
-      color: #4ecdc4 !important;
-      font-weight: 700;
+    // 今天：明显标注（青色描边圆环 + 光晕 + 底部圆点）
+    &.today {
+      .el-date-table-cell {
+        position: relative;
+      }
+
+      .el-date-table-cell__text {
+        color: #4ecdc4 !important;
+        font-weight: 800 !important;
+        border: 1px solid rgba(78, 205, 196, 0.75) !important;
+        border-radius: 50% !important;
+        box-shadow: 0 0 10px rgba(78, 205, 196, 0.45);
+        animation: albumTodayPulse 2.4s ease-in-out infinite;
+      }
+
+      // 底部小圆点，进一步强调“今天”
+      .el-date-table-cell::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 2px;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #4ecdc4;
+        box-shadow: 0 0 6px rgba(78, 205, 196, 0.85);
+      }
     }
 
     // 选中
@@ -370,6 +394,13 @@ scrollbar-thumb {
         color: rgba(255, 255, 255, 0.18) !important;
         cursor: not-allowed;
       }
+    }
+
+    // 即便当天无照片被禁用，也要保持“今天”的标注可见
+    &.today.disabled .el-date-table-cell__text {
+      color: #4ecdc4 !important;
+      opacity: 0.9;
+      border-color: rgba(78, 205, 196, 0.7) !important;
     }
   }
 
@@ -395,5 +426,62 @@ scrollbar-thumb {
         color: #fff !important;
       }
     }
+  }
+}
+
+// 相册日期选择器“今天”标注的呼吸光晕
+@keyframes albumTodayPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(78, 205, 196, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(78, 205, 196, 0.7);
+  }
+}
+
+// 相册日期选择器输入框深色适配（全局，避免 Element 默认白底）
+// 注意：el-date-picker 不会把自定义 class（date-picker）透传到根元素，
+// 因此这里统一用 Element 必然存在的 .el-date-editor 作为锚点。
+.album-container .el-date-editor {
+  // Element 的输入框“边框”是用 box-shadow 配合这些变量绘制的。
+  // 把这些变量直接定义在 .el-date-editor 上（优先级高于 Element 自身的 .el-input 定义），
+  // 全部中和为透明，可保证默认/hover/focus/is-active 任意状态都不出现描边。
+  --el-input-bg-color: transparent;
+  --el-fill-color-blank: transparent;
+  --el-input-border-color: transparent;
+  --el-input-hover-border-color: transparent;
+  --el-input-focus-border-color: transparent;
+  --el-input-focus-color: transparent;
+
+  .el-input__wrapper,
+  .el-input__wrapper:hover,
+  .el-input__wrapper.is-focus,
+  &.is-active .el-input__wrapper,
+  .el-input.is-active .el-input__wrapper {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(8px);
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 30px !important;
+    transition: background-color 0.25s ease;
+  }
+
+  .el-input__wrapper:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .el-input__inner {
+    color: #fff !important;
+    background: transparent !important;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.4) !important;
+    }
+  }
+
+  .el-input__prefix,
+  .el-input__suffix {
+    color: rgba(255, 255, 255, 0.5) !important;
   }
 }

@@ -154,6 +154,21 @@ onBeforeUnmount(() => {
     z-index: 1;
     pointer-events: none;
     mix-blend-mode: screen;
+    // 用柔和的椭圆遮罩把极光四周渐隐，消除展开后明显的硬边界，使其融入星空背景
+    -webkit-mask-image: radial-gradient(
+      ellipse 92% 62% at 50% 47%,
+      #000 0%,
+      #000 32%,
+      rgba(0, 0, 0, 0.55) 60%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 92% 62% at 50% 47%,
+      #000 0%,
+      #000 32%,
+      rgba(0, 0, 0, 0.55) 60%,
+      transparent 100%
+    );
     transition:
       opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
       filter 1.4s ease-out;
@@ -193,14 +208,37 @@ onBeforeUnmount(() => {
   }
 }
 
+// 极光入场：先在中心聚成一点，再横向铺展开来，最后纵向展开成完整光带
 .aurora-fade-enter-active {
-  transition: opacity 2s ease-in;
+  animation: auroraReveal 3.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: clip-path, opacity, transform, filter;
 }
-.aurora-fade-enter-from {
-  opacity: 0;
-}
-.aurora-fade-enter-to {
-  opacity: 1;
+
+@keyframes auroraReveal {
+  0% {
+    clip-path: inset(49.5% 50% 49.5% 50% round 50%);
+    opacity: 0;
+    transform: scale(0.96);
+    filter: blur(10px) brightness(2);
+  }
+  14% {
+    clip-path: inset(45% 47.5% 45% 47.5% round 50%);
+    opacity: 0.9;
+    transform: scale(1);
+    filter: blur(5px) brightness(1.7);
+  }
+  55% {
+    clip-path: inset(33% 0% 33% 0% round 14%);
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(2px) brightness(1.25);
+  }
+  100% {
+    clip-path: inset(0% 0% 0% 0% round 0%);
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0) brightness(1);
+  }
 }
 
 @keyframes vignetteDisperse {

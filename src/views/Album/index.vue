@@ -53,18 +53,30 @@
       <!-- 时间筛选 -->
       <div class="time-selector">
         <el-date-picker
+          :key="pickerKey"
           v-model="selectedDate"
           type="date"
           placeholder="选择日期"
           format="YYYY-MM-DD"
           value-format="YYYY-MM-DD"
+          clearable
+          :default-value="defaultPanelDate"
           @change="handleDateChange"
+          @visible-change="onPickerVisibleChange"
           class="date-picker"
           popper-class="space-date-popper"
           :disabled-date="disabledDate"
         />
-        <button class="filter-btn" @click="showTodayPhotos">今天</button>
-        <button class="filter-btn primary" @click="showAllPhotos">全部</button>
+        <button
+          class="filter-btn"
+          :class="{ active: activeFilter === 'today' }"
+          @click="showTodayPhotos"
+        >今天</button>
+        <button
+          class="filter-btn"
+          :class="{ active: activeFilter === 'all' }"
+          @click="showAllPhotos"
+        >全部</button>
       </div>
     </div>
 
@@ -225,6 +237,13 @@ const currentPhoto = ref(null);
 const currentPhotoIndex = ref(0);
 const store = mainStore();
 
+// 当前筛选模式：'all' | 'today' | 'date'，用于按钮高亮
+const activeFilter = ref('all');
+// 用于在面板进入年/年代视图后强制回到初始视图（关闭即重建）
+const pickerKey = ref(0);
+// 日期面板默认定位到今天所在月份
+const defaultPanelDate = new Date();
+
 // 视图模式（持久化于 store）
 const viewMode = computed(() => store.albumViewMode);
 const setViewMode = (mode) => {
@@ -323,16 +342,32 @@ const groupedPhotos = computed(() => {
 
 // 方法
 const handleDateChange = (date) => {
-  if (date) filterPhotosByDate(date);
+  if (date) {
+    activeFilter.value = 'date';
+    filterPhotosByDate(date);
+  } else {
+    // 清空选择时重置为未选状态并显示全部
+    showAllPhotos();
+  }
+};
+
+// 面板关闭后强制重建，保证下次打开回到初始的当月日历视图
+const onPickerVisibleChange = (visible) => {
+  if (!visible) {
+    pickerKey.value++;
+  }
 };
 
 const showTodayPhotos = () => {
+  activeFilter.value = 'today';
   selectedDate.value = today.value;
   filterPhotosByDate(today.value);
 };
 
 const showAllPhotos = () => {
-  selectedDate.value = '';
+  activeFilter.value = 'all';
+  // 置为 null 使日期选择器回到未选状态（重新打开时显示当前月那页日历）
+  selectedDate.value = null;
   currentPhotos.value = photosData.value;
 };
 
@@ -671,10 +706,12 @@ onBeforeUnmount(() => {
       transform: translateY(-2px);
     }
 
-    &.primary {
-      background: linear-gradient(135deg, rgba(78, 205, 196, 0.25), rgba(102, 126, 234, 0.25));
-      border-color: rgba(78, 205, 196, 0.5);
+    // 当前生效的筛选高亮
+    &.active {
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(102, 126, 234, 0.3));
+      border-color: rgba(78, 205, 196, 0.6);
       color: #fff;
+      box-shadow: 0 0 14px rgba(78, 205, 196, 0.25);
     }
   }
 }
@@ -1249,24 +1286,8 @@ onBeforeUnmount(() => {
   }
 }
 
-// 日期选择器深色适配
-:deep(.date-picker) {
-  .el-input__wrapper {
-    background: rgba(255, 255, 255, 0.04) !important;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
-    border-radius: 30px !important;
-  }
-  .el-input__inner {
-    color: #fff !important;
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.4) !important;
-    }
-  }
-  .el-input__prefix,
-  .el-input__suffix {
-    color: rgba(255, 255, 255, 0.5) !important;
-  }
-}
+// 日期选择器输入框深色适配见全局 style.scss（.album-container .date-picker），
+// scoped :deep 无法稳定覆盖 Element 的底色变量，故移至全局。
 
 // 响应式
 @media (max-width: 768px) {
