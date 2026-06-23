@@ -82,6 +82,12 @@ const jumpLink = (data) => {
   } else if (data.name === "相册") {
     // 打开内部相册页面
     store.albumOpenState = true;
+  } else if (data.name === "随笔") {
+    // 打开内部随笔/博客页面
+    store.blogOpenState = true;
+  } else if (data.name === "猫猫") {
+    // 打开内部猫猫视频页面
+    store.catOpenState = true;
   } else if (data.name === "留言板") {
     // 打开内部留言板页面
     store.messageBoardOpenState = true;

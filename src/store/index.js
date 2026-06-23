@@ -18,6 +18,9 @@ export const mainStore = defineStore("main", {
       mobileFuncState: false, // 移动端功能区开启状态
       setOpenState: false, // 设置页面开启状态
       albumOpenState: false, // 相册页面开启状态
+      albumViewMode: "card", // 相册视图模式 "card" | "timeline"
+      blogOpenState: false, // 随笔/博客页面开启状态
+      catOpenState: false, // 猫猫页面开启状态
       messageBoardOpenState: false, // 留言板页面开启状态
       playerState: false, // 当前播放状态
       playerTitle: null, // 当前播放歌曲名
@@ -99,6 +102,7 @@ export const mainStore = defineStore("main", {
       "playerOrder",
       "returnHintShow",
       "skipSpaceWelcome",
+      "albumViewMode",
     ],
   },
 });
