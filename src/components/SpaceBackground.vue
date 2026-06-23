@@ -3,9 +3,13 @@
     <canvas ref="canvasRef" class="galaxy-canvas"></canvas>
     <div class="deep-vignette"></div>
 
-    <!-- 流星滑动（保留原版 CSS 效果） -->
+    <!-- 流星滑动（保留原效果，仅每次飞行随机变化轨迹） -->
     <div class="meteors-container">
-      <div class="meteor"></div>
+      <div
+        class="meteor"
+        :style="meteor.style"
+        @animationiteration="resetMeteor"
+      ></div>
     </div>
   </div>
 </template>
@@ -15,6 +19,27 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import Experience from "@/galaxy/js/experience.js";
 
 const canvasRef = ref(null);
+
+// 仅随机化流星的运行轨迹（角度与起点），其余效果保持原样
+const createMeteor = () => {
+  const angle = -12 + Math.random() * 45; // 倾斜角度（含轻微上下偏移）
+  const top = Math.random() * 60; // 起始纵向位置 (vh)
+  const left = -15 + Math.random() * 10; // 起始横向位置 (vw)，在屏幕左侧外
+  return {
+    style: {
+      top: `${top}vh`,
+      left: `${left}vw`,
+      "--angle": `${angle}deg`,
+    },
+  };
+};
+
+const meteor = ref(createMeteor());
+
+// 每飞完一轮就换一条新的随机轨迹
+const resetMeteor = () => {
+  meteor.value = createMeteor();
+};
 
 onMounted(() => {
   if (canvasRef.value) {
@@ -98,6 +123,8 @@ onBeforeUnmount(() => {
     0 0 8px rgba(255, 255, 255, 0.9),
     0 0 16px rgba(135, 206, 235, 0.7),
     0 0 24px rgba(255, 255, 255, 0.5);
+  // 仅运行轨迹（角度）由 JS 注入的 CSS 变量控制，其余保持原效果
+  --angle: 0deg;
   animation: meteorSlide 6s linear infinite;
 
   &::before {
@@ -123,14 +150,9 @@ onBeforeUnmount(() => {
   }
 }
 
-.meteor {
-  top: 30%;
-  left: -50px;
-}
-
 @keyframes meteorSlide {
   0% {
-    transform: translateX(0);
+    transform: rotate(var(--angle)) translateX(0);
     opacity: 0;
   }
   10% {
@@ -140,7 +162,7 @@ onBeforeUnmount(() => {
     opacity: 1;
   }
   100% {
-    transform: translateX(calc(100vw + 100px));
+    transform: rotate(var(--angle)) translateX(calc(100vw + 100px));
     opacity: 0;
   }
 }
