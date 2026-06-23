@@ -169,6 +169,7 @@ onBeforeUnmount(() => {
       rgba(0, 0, 0, 0.55) 60%,
       transparent 100%
     );
+    transform-origin: 50% 47%;
     transition:
       opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
       filter 1.4s ease-out;
@@ -209,34 +210,31 @@ onBeforeUnmount(() => {
 }
 
 // 极光入场：先在中心聚成一点，再横向铺展开来，最后纵向展开成完整光带
+// 用 transform 缩放代替 clip-path，配合柔和的椭圆遮罩羽化所有边缘，避免任何硬边界
 .aurora-fade-enter-active {
   animation: auroraReveal 3.2s cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: clip-path, opacity, transform, filter;
+  will-change: opacity, transform, filter;
 }
 
 @keyframes auroraReveal {
   0% {
-    clip-path: inset(49.5% 50% 49.5% 50% round 50%);
     opacity: 0;
-    transform: scale(0.96);
-    filter: blur(10px) brightness(2);
+    transform: scale(0.04, 0.02);
+    filter: blur(12px) brightness(2);
   }
-  14% {
-    clip-path: inset(45% 47.5% 45% 47.5% round 50%);
+  16% {
     opacity: 0.9;
-    transform: scale(1);
-    filter: blur(5px) brightness(1.7);
+    transform: scale(0.14, 0.04);
+    filter: blur(8px) brightness(1.7);
   }
   55% {
-    clip-path: inset(33% 0% 33% 0% round 14%);
     opacity: 1;
-    transform: scale(1);
-    filter: blur(2px) brightness(1.25);
+    transform: scale(1, 0.2);
+    filter: blur(4px) brightness(1.25);
   }
   100% {
-    clip-path: inset(0% 0% 0% 0% round 0%);
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1, 1);
     filter: blur(0) brightness(1);
   }
 }
