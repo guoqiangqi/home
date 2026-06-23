@@ -80,6 +80,20 @@ export default class Experience {
     this.iMouse.update()
   }
 
+  // 暂停渲染循环（用于切换到主页面时，保留场景与 GPU 资源，避免销毁重建）
+  static pause() {
+    if (instance) {
+      instance.time.stop()
+    }
+  }
+
+  // 恢复渲染循环（切回太空页面时无缝继续）
+  static resume() {
+    if (instance) {
+      instance.time.play()
+    }
+  }
+
   static destroy() {
     if (!instance) {
       return

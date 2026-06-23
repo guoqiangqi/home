@@ -3,6 +3,16 @@ import Planet from './planet.js'
 
 const RADIUS = 0.7
 
+// 轨道常量提到模块级，避免每帧重复分配
+const ORBIT_ROTATIONS = [0, Math.PI * 2 / 3, Math.PI * 4 / 3]
+const PHASE_OFFSETS = [0, Math.PI * 2 / 3, Math.PI * 4 / 3]
+// 各星体椭圆轨道长/短轴相对 baseRadius 的倍率，以及 Y 轴偏移相对 yOffsetScale 的倍率
+const ELLIPSE_AXES = [
+  { aMul: 1.3, bMul: 1.3 * 0.7, yOffsetMul: 1 }, // Planet A (大) - 最外层
+  { aMul: 0.7, bMul: 0.7 * 0.8, yOffsetMul: -1 }, // Planet B (小) - 最内层
+  { aMul: 1.0, bMul: 1.0 * 0.6, yOffsetMul: 0 }, // Planet C (中) - 中层
+]
+
 // 构建三星运动系统
 export default class Planets {
   constructor() {
@@ -274,41 +284,17 @@ export default class Planets {
 
   // 椭圆轨迹计算函数（集成速度控制和Y轴错开）
   calculatePseudoThreeBodyPosition(planetIndex, time) {
-    // 为三个星体配置不同的椭圆轨道参数
-    const ellipseConfigs = [
-      {
-        // Planet A (最大) - 最外层轨道
-        a: this.motionParams.baseRadius * 1.3, // 长轴更大
-        b: this.motionParams.baseRadius * 1.3 * 0.7, // 短轴对应调整
-        yOffset: this.motionParams.yOffsetScale, // Y轴偏移量 (向上)
-        name: 'Planet A (大)',
-      },
-      {
-        // Planet B (最小) - 最内层轨道
-        a: this.motionParams.baseRadius * 0.7, // 长轴最小
-        b: this.motionParams.baseRadius * 0.7 * 0.8, // 短轴对应调整
-        yOffset: -this.motionParams.yOffsetScale, // Y轴偏移量 (向下)
-        name: 'Planet B (小)',
-      },
-      {
-        // Planet C (中等) - 中层轨道
-        a: this.motionParams.baseRadius * 1.0, // 中等长轴
-        b: this.motionParams.baseRadius * 1.0 * 0.6, // 中等短轴
-        yOffset: 0.0, // Y轴中心位置
-        name: 'Planet C (中)',
-      },
-    ]
-
-    const ellipseParams = ellipseConfigs[planetIndex]
+    // 椭圆轨道参数由模块级常量推导，避免每帧分配数组/对象
+    const axes = ELLIPSE_AXES[planetIndex]
+    const ellipseA = this.motionParams.baseRadius * axes.aMul
+    const ellipseB = this.motionParams.baseRadius * axes.bMul
+    const ellipseYOffset = this.motionParams.yOffsetScale * axes.yOffsetMul
 
     // 获取当前星体的运动速度
     const planetSpeed = this.getPlanetSpeed(planetIndex)
 
-    const rotationAngles = [0, Math.PI * 2 / 3, Math.PI * 4 / 3]
-    const phaseOffsets = [0, Math.PI * 2 / 3, Math.PI * 4 / 3]
-
-    const orbitRotation = rotationAngles[planetIndex]
-    const phaseOffset = phaseOffsets[planetIndex]
+    const orbitRotation = ORBIT_ROTATIONS[planetIndex]
+    const phaseOffset = PHASE_OFFSETS[planetIndex]
 
     // 使用星体特定的速度
     const baseAngle = time * planetSpeed + phaseOffset
@@ -322,8 +308,8 @@ export default class Planets {
     const clampedBaseScale = Math.min(Math.max(baseScale, 0.2), 3.0)
     const skewOffset = Math.min(Math.max(harmonicInfluence.skewOffset, -0.9), 0.9)
 
-    const axisX = ellipseParams.a * Math.max(0.15, clampedBaseScale + skewOffset)
-    const axisY = ellipseParams.b * Math.max(0.15, clampedBaseScale - skewOffset)
+    const axisX = ellipseA * Math.max(0.15, clampedBaseScale + skewOffset)
+    const axisY = ellipseB * Math.max(0.15, clampedBaseScale - skewOffset)
 
     const localX = axisX * Math.cos(modulatedAngle)
     const localY = axisY * Math.sin(modulatedAngle)
@@ -332,7 +318,7 @@ export default class Planets {
     const z = localX * Math.sin(orbitRotation) + localY * Math.cos(orbitRotation)
 
     // 基础Y轴偏移 + 少量垂直运动
-    const baseYOffset = ellipseParams.yOffset
+    const baseYOffset = ellipseYOffset
     const verticalMotion = Math.sin(modulatedAngle * 2 + phaseOffset) * this.motionParams.verticalAmplitude * 0.1
     const harmonicVertical = Math.min(Math.max(harmonicInfluence.verticalOffset, -3.0), 3.0)
     const y = baseYOffset + verticalMotion + harmonicVertical

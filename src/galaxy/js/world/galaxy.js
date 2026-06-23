@@ -61,6 +61,12 @@ export default class Galaxy {
     const colors = new Float32Array(this.parameters.count * 3)
     const scales = new Float32Array(this.parameters.count)
     const randoms = new Float32Array(this.parameters.count * 3)
+
+    // 颜色对象复用，避免在十万级循环内反复解析颜色字符串与分配对象
+    const colorInside = new THREE.Color(this.parameters.insideColor)
+    const colorOutside = new THREE.Color(this.parameters.outsideColor)
+    const mixedColor = new THREE.Color()
+
     for (let i = 0; i < this.parameters.count; i++) {
       const i3 = i * 3
 
@@ -102,13 +108,11 @@ export default class Galaxy {
       positions[i3 + 2] = z
 
       //   Color
-      const colorInside = new THREE.Color(this.parameters.insideColor)
-      const colorOutside = new THREE.Color(this.parameters.outsideColor)
-      const color = colorInside.lerp(colorOutside, radius / maxRadius)
+      mixedColor.copy(colorInside).lerp(colorOutside, radius / maxRadius)
 
-      colors[i3] = color.r
-      colors[i3 + 1] = color.g
-      colors[i3 + 2] = color.b
+      colors[i3] = mixedColor.r
+      colors[i3 + 1] = mixedColor.g
+      colors[i3 + 2] = mixedColor.b
 
       //   Scale
       scales[i] = Math.random()

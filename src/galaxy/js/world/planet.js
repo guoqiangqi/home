@@ -75,8 +75,8 @@ export default class Planet {
   }
 
   init() {
-    // 创建星球几何体（增加细分以支持置换）
-    this.geometry = new THREE.IcosahedronGeometry(this.radius, 64, 64)
+    // 创建星球几何体（细分足以支撑置换且与高细分视觉一致，第三参数原本被忽略）
+    this.geometry = new THREE.IcosahedronGeometry(this.radius, 32)
 
     // 设置主纹理 & 各项异性过滤
     const texture = this.resources.items[this.textureName]
@@ -144,7 +144,8 @@ export default class Planet {
   createAtmosphere() {
     // 创建大气层几何体，半径比星球大 4%
     const atmosphereRadius = this.radius * 1.14
-    this.atmosphereGeometry = new THREE.IcosahedronGeometry(atmosphereRadius, 64, 32)
+    // 大气层为纯平滑辉光壳，无需高细分，低细分视觉无差异
+    this.atmosphereGeometry = new THREE.IcosahedronGeometry(atmosphereRadius, 24)
 
     // 创建大气层材质
     this.atmosphereMaterial = new THREE.ShaderMaterial({

@@ -76,10 +76,11 @@ export default class LensFlare {
     // 更新材质参数
     this.updateMaterialParams()
 
-    // 内部工具对象
+    // 内部工具对象（复用，避免每帧分配）
     const viewport = new THREE.Vector4()
     const flarePosition = new THREE.Vector3()
     const raycaster = new THREE.Raycaster()
+    const tmpTargetPosition = new THREE.Vector2()
     const oldOpacity = this.params.opacity
 
     // 加载镜头污渍纹理
@@ -141,10 +142,10 @@ export default class LensFlare {
         // 跟随鼠标 (NDC 坐标)，使用 lerp 逐渐逼近
         const targetX = normalizedMouse.x * 0.06
         const targetY = normalizedMouse.y * 0.06
-        const targetPosition = new THREE.Vector2(targetX, targetY)
+        tmpTargetPosition.set(targetX, targetY)
 
         // 使用 lerp 插值逐渐逼近目标位置
-        this.currentLensPosition.lerp(targetPosition, this.params.mouseLerpSpeed)
+        this.currentLensPosition.lerp(tmpTargetPosition, this.params.mouseLerpSpeed)
 
         // 更新 uniform 值
         this.lensFlareMaterial.uniforms.lensPosition.value.copy(this.currentLensPosition)

@@ -1,7 +1,7 @@
 <template>
   <!-- 太空背景 -->
   <SpaceBackground
-    v-if="!showMainPage"
+    v-show="!showMainPage"
     :class="{
       'is-revealing': spaceRevealing,
       'splash-dimmed': !store.splashDone && !spaceRevealing,
@@ -142,6 +142,7 @@ import Cat from "@/views/Cat/index.vue";
 import MessageBoard from "@/views/MessageBoard/index.vue";
 import SpaceBackground from "@/components/SpaceBackground.vue";
 import WallpaperSelector from "@/components/WallpaperSelector.vue";
+import Experience from "@/galaxy/js/experience.js";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 
@@ -203,6 +204,15 @@ watch(
     }
   },
 );
+
+// 进入主页面时暂停太空引擎渲染、返回时无缝恢复（避免销毁重建带来的卡顿）
+watch(showMainPage, (isMain) => {
+  if (isMain) {
+    Experience.pause();
+  } else {
+    Experience.resume();
+  }
+});
 
 // 触摸事件相关变量
 let touchStartY = 0;
