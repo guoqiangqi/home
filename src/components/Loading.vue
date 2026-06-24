@@ -183,7 +183,9 @@ onBeforeUnmount(() => {
       rgba(0, 0, 0, 0.55) 60%,
       transparent 100%
     );
-    transform-origin: 50% 47%;
+    // 缩放锚点对齐 WebGL 极光光带的真实纵向中心（bandHeight 0.45 ≈ 距顶部 55%），
+    // 避免纵向展开时光带相对锚点漂移产生跳动
+    transform-origin: 50% 55%;
     transition:
       opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
       filter 1.4s ease-out;
