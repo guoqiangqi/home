@@ -41,6 +41,19 @@
             :enable-mouse-interaction="true"
             :mouse-influence="0.2"
           />
+          <div class="aurora-particles">
+            <AuroraParticles
+              :count="100"
+              color1="#c8e6ff"
+              color2="#9d7bff"
+              :speed="1.0"
+              :max-size="2.6"
+              :band-center="0.5"
+              :band-spread="0.3"
+              :enable-mouse-interaction="true"
+              :mouse-influence="1.0"
+            />
+          </div>
         </div>
       </Transition>
 
@@ -56,6 +69,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { mainStore } from "@/store";
 import Galaxy from "@/components/Galaxy.vue";
 import SoftAurora from "@/components/SoftAurora.vue";
+import AuroraParticles from "@/components/AuroraParticles.vue";
 
 const emit = defineEmits(["exit-start"]);
 
@@ -174,6 +188,16 @@ onBeforeUnmount(() => {
       opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1),
       filter 1.4s ease-out;
 
+    .aurora-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      // 粒子比光带稍慢淡入，营造光尘逐渐浮现的层次感
+      animation: particlesFadeIn 2.8s ease-out 0.6s both;
+    }
+
     &.aurora-traverse {
       opacity: 0;
       filter: blur(4px);
@@ -236,6 +260,15 @@ onBeforeUnmount(() => {
     opacity: 1;
     transform: scale(1, 1);
     filter: blur(0) brightness(1);
+  }
+}
+
+@keyframes particlesFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
