@@ -453,27 +453,48 @@ scrollbar-thumb {
   --el-input-focus-color: transparent;
 }
 
+.album-container .el-date-editor.el-input__wrapper,
+.album-container .el-date-editor.el-input__wrapper:hover,
+.album-container .el-date-editor.el-input__wrapper.is-focus,
+.album-container .el-date-editor.el-input__wrapper.is-active,
+.album-container .el-date-editor.el-input__wrapper:focus,
+.album-container .el-date-editor.el-input__wrapper:focus-within,
 .album-container .el-input__wrapper,
 .album-container .el-input__wrapper:hover,
 .album-container .el-input__wrapper.is-focus,
-.album-container .el-input__wrapper.is-active {
+.album-container .el-input__wrapper.is-active,
+.album-container .el-input__wrapper:focus,
+.album-container .el-input__wrapper:focus-within {
   background-color: rgba(255, 255, 255, 0.04) !important;
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: none !important;
+  border-color: transparent !important;
   box-shadow: none !important;
   outline: none !important;
   border-radius: 30px !important;
   transition: background-color 0.25s ease;
 }
 
+.album-container .el-date-editor.el-input__wrapper:hover,
 .album-container .el-input__wrapper:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.album-container .el-date-editor.el-input__wrapper::before,
+.album-container .el-date-editor.el-input__wrapper::after,
+.album-container .el-input__wrapper::before,
+.album-container .el-input__wrapper::after {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .album-container .el-input__inner {
   color: #fff !important;
   background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.4) !important;
