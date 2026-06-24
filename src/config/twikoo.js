@@ -1,7 +1,7 @@
 // Twikoo 配置文件
 export const twikooConfig = {
-  // Twikoo 环境 ID
-  envId: 'https://twikoo-one-brown-59.vercel.app',
+  // Twikoo 环境 ID：优先读取环境变量 VITE_TWIKOO_ENVID（你自己部署的后端地址或腾讯云环境 ID）
+  envId: import.meta.env.VITE_TWIKOO_ENVID || 'https://twikoo-one-brown-59.vercel.app',
   
   // 评论容器选择器
   el: '#twikoo',
@@ -55,15 +55,15 @@ export const twikooStyles = `
     left: 0 !important;
     right: 0 !important;
     height: 1px !important;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent) !important;
+    background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.5), transparent) !important;
     opacity: 0 !important;
     transition: opacity 0.3s ease !important;
   }
   
   .twikoo .twikoo-comment:hover {
     transform: translateY(-3px) !important;
-    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.25) !important;
-    border-color: rgba(102, 126, 234, 0.3) !important;
+    box-shadow: 0 12px 30px rgba(78, 205, 196, 0.25) !important;
+    border-color: rgba(78, 205, 196, 0.3) !important;
   }
   
   .twikoo .twikoo-comment:hover::before {
@@ -79,13 +79,13 @@ export const twikooStyles = `
   }
   
   .twikoo .twikoo-comment:hover .twikoo-avatar {
-    border-color: rgba(102, 126, 234, 0.5) !important;
+    border-color: rgba(78, 205, 196, 0.5) !important;
     transform: scale(1.05) !important;
   }
   
   /* 用户名 - 渐变文字 */
   .twikoo .twikoo-comment .twikoo-nick {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: linear-gradient(135deg, #4ecdc4 0%, #a78bff 100%) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -137,17 +137,17 @@ export const twikooStyles = `
   }
   
   .twikoo .twikoo-comment .twikoo-action:hover {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
-    border-color: rgba(102, 126, 234, 0.4) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.2) 0%, rgba(167, 139, 255, 0.15) 100%) !important;
+    border-color: rgba(78, 205, 196, 0.4) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.2) !important;
   }
   
   .twikoo .twikoo-comment .twikoo-action.liked {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
-    border-color: rgba(102, 126, 234, 0.6) !important;
-    color: #667eea !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.3) 0%, rgba(167, 139, 255, 0.25) 100%) !important;
+    border-color: rgba(78, 205, 196, 0.6) !important;
+    color: #4ecdc4 !important;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3) !important;
   }
   
   /* 评论表单 - 玻璃态设计 */
@@ -166,8 +166,8 @@ export const twikooStyles = `
   
   .twikoo .twikoo-comment-form:hover {
     transform: translateY(-3px) !important;
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.25) !important;
-    border-color: rgba(102, 126, 234, 0.3) !important;
+    box-shadow: 0 12px 35px rgba(78, 205, 196, 0.25) !important;
+    border-color: rgba(78, 205, 196, 0.3) !important;
   }
   
   .twikoo .twikoo-comment-form::before {
@@ -177,7 +177,7 @@ export const twikooStyles = `
     left: 0 !important;
     right: 0 !important;
     height: 2px !important;
-    background: linear-gradient(90deg, #667eea, #764ba2, #667eea) !important;
+    background: linear-gradient(90deg, #4ecdc4, #a78bff, #4ecdc4) !important;
     background-size: 200% 100% !important;
     animation: gradientMove 3s ease-in-out infinite !important;
   }
@@ -189,7 +189,7 @@ export const twikooStyles = `
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.03) 100%) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.05) 0%, rgba(167, 139, 255, 0.03) 100%) !important;
     opacity: 0 !important;
     transition: opacity 0.3s ease !important;
     pointer-events: none !important;
@@ -215,15 +215,15 @@ export const twikooStyles = `
   
   .twikoo .twikoo-comment-form input:hover,
   .twikoo .twikoo-comment-form textarea:hover {
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15) !important;
-    border-color: rgba(102, 126, 234, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.15) !important;
+    border-color: rgba(78, 205, 196, 0.4) !important;
     transform: translateY(-1px) !important;
   }
   
   .twikoo .twikoo-comment-form input:focus,
   .twikoo .twikoo-comment-form textarea:focus {
-    border-color: #667eea !important;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15), 0 6px 20px rgba(102, 126, 234, 0.2) !important;
+    border-color: #4ecdc4 !important;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.15), 0 6px 20px rgba(78, 205, 196, 0.2) !important;
     outline: none !important;
     transform: translateY(-2px) !important;
   }
@@ -233,10 +233,133 @@ export const twikooStyles = `
     color: #a0a0a0 !important;
     font-weight: 400 !important;
   }
+
+  /* ===== Twikoo 实际 DOM 适配（深色玻璃态，统一太空主题） ===== */
+  #twikoo .tk-comments,
+  #twikoo .tk-input {
+    color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  /* 输入框：主评论框 + 昵称/邮箱/网址 */
+  #twikoo .el-input__inner,
+  #twikoo .el-textarea__inner {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  #twikoo .el-input__inner::placeholder,
+  #twikoo .el-textarea__inner::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  #twikoo .el-input__inner:hover,
+  #twikoo .el-textarea__inner:hover {
+    border-color: rgba(78, 205, 196, 0.45) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+  }
+
+  #twikoo .el-input__inner:focus,
+  #twikoo .el-textarea__inner:focus {
+    border-color: #4ecdc4 !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.15) !important;
+    outline: none !important;
+  }
+
+  /* 输入框前置标签：昵称 / 邮箱 / 网址 */
+  #twikoo .el-input-group__prepend {
+    background: rgba(78, 205, 196, 0.12) !important;
+    border: 1px solid rgba(78, 205, 196, 0.25) !important;
+    border-right: none !important;
+    border-radius: 12px 0 0 12px !important;
+    color: rgba(135, 206, 235, 0.9) !important;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+  }
+
+  #twikoo .el-input-group--prepend .el-input__inner {
+    border-radius: 0 12px 12px 0 !important;
+  }
+
+  /* 元信息三栏间距 */
+  #twikoo .tk-meta-input {
+    gap: 12px !important;
+  }
+
+  /* 发送 / 提交按钮 */
+  #twikoo .tk-send,
+  #twikoo .el-button--primary {
+    background: linear-gradient(135deg, #4ecdc4 0%, #a78bff 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    color: #06121f !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3) !important;
+  }
+
+  #twikoo .tk-send:hover,
+  #twikoo .el-button--primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 22px rgba(78, 205, 196, 0.45) !important;
+  }
+
+  /* 评论列表项玻璃态 */
+  #twikoo .tk-comment {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 18px 20px !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.35s ease !important;
+  }
+
+  #twikoo .tk-comment:hover {
+    border-color: rgba(78, 205, 196, 0.3) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 8, 0.4) !important;
+  }
+
+  #twikoo .tk-nick {
+    color: #87ceeb !important;
+    font-weight: 600 !important;
+  }
+
+  #twikoo .tk-content,
+  #twikoo .tk-content p {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  #twikoo .tk-meta,
+  #twikoo .tk-time,
+  #twikoo .tk-extras,
+  #twikoo .tk-extra {
+    color: rgba(255, 255, 255, 0.45) !important;
+  }
+
+  #twikoo .tk-avatar {
+    border-radius: 50% !important;
+    box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.25) !important;
+  }
+
+  #twikoo .tk-action-icon,
+  #twikoo .tk-comments-count,
+  #twikoo .tk-icon {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* 字数统计 / 提示文字 */
+  #twikoo .tk-meta-input .el-input,
+  #twikoo .tk-row {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
   
   /* 提交按钮 - 渐变按钮 */
   .twikoo .twikoo-comment-form .twikoo-submit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%) !important;
+    background: linear-gradient(135deg, #4ecdc4 0%, #a78bff 50%, #4ecdc4 100%) !important;
     background-size: 200% 200% !important;
     border: none !important;
     border-radius: 12px !important;
@@ -249,7 +372,7 @@ export const twikooStyles = `
     position: relative !important;
     overflow: hidden !important;
     animation: gradientShift 3s ease-in-out infinite !important;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3) !important;
   }
   
   .twikoo .twikoo-comment-form .twikoo-submit::before {
@@ -265,7 +388,7 @@ export const twikooStyles = `
   
   .twikoo .twikoo-comment-form .twikoo-submit:hover {
     transform: translateY(-3px) !important;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5) !important;
+    box-shadow: 0 10px 30px rgba(78, 205, 196, 0.5) !important;
   }
   
   .twikoo .twikoo-comment-form .twikoo-submit:hover::before {
@@ -274,23 +397,23 @@ export const twikooStyles = `
   
   .twikoo .twikoo-comment-form .twikoo-submit:active {
     transform: translateY(-1px) !important;
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4) !important;
   }
   
   /* 回复区域 - 优雅设计 */
   .twikoo .twikoo-reply {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.08) 100%) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(167, 139, 255, 0.08) 100%) !important;
     border-radius: 16px !important;
     padding: 20px !important;
     margin-top: 20px !important;
-    border-left: 4px solid #667eea !important;
+    border-left: 4px solid #4ecdc4 !important;
     backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(102, 126, 234, 0.2) !important;
+    border: 1px solid rgba(78, 205, 196, 0.2) !important;
   }
   
   /* 加载动画 - 现代化加载 */
   .twikoo .twikoo-loading {
-    color: #667eea !important;
+    color: #4ecdc4 !important;
     text-align: center !important;
     padding: 40px 20px !important;
     font-size: 1.1rem !important;

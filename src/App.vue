@@ -66,7 +66,7 @@
       <!-- 主内容页面 -->
       <div v-else class="main-page" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
         <div class="container" v-show="!store.backgroundShow">
-          <section class="all" v-show="!store.setOpenState && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState">
+          <section class="all" v-show="!store.setOpenState && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState && !store.musicPageOpenState && !store.panOpenState">
             <MainLeft />
             <MainRight v-show="!store.boxOpenState" />
             <Box v-show="store.boxOpenState" />
@@ -86,6 +86,13 @@
           <section class="message-board" v-show="store.messageBoardOpenState" @click="store.messageBoardOpenState = false">
             <MessageBoard />
           </section>
+          <!-- 音乐页常驻挂载，迷你控制器复用其播放器实例 -->
+          <section class="music-page" v-show="store.musicPageOpenState" @click="store.musicPageOpenState = false">
+            <MusicPage />
+          </section>
+          <section class="pan" v-show="store.panOpenState" @click="store.panOpenState = false">
+            <Pan />
+          </section>
         </div>
         
         <!-- 移动端菜单按钮 -->
@@ -104,7 +111,7 @@
         </Transition>
         
         <!-- 返回提示 -->
-        <div class="return-hint" v-show="showMainPage && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState">
+        <div class="return-hint" v-show="showMainPage && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState && !store.musicPageOpenState && !store.panOpenState">
           <div class="hint-content">
             <div class="hint-icon">↑</div>
             <p>向上滑动返回太空页面</p>
@@ -140,6 +147,8 @@ import Album from "@/views/Album/index.vue";
 import Blog from "@/views/Blog/index.vue";
 import Cat from "@/views/Cat/index.vue";
 import MessageBoard from "@/views/MessageBoard/index.vue";
+import MusicPage from "@/views/Music/index.vue";
+import Pan from "@/views/Pan/index.vue";
 import SpaceBackground from "@/components/SpaceBackground.vue";
 import WallpaperSelector from "@/components/WallpaperSelector.vue";
 import Experience from "@/galaxy/js/experience.js";
@@ -233,8 +242,8 @@ const handleScroll = () => {
 
 // 鼠标滚轮事件
 const handleWheel = (event) => {
-  // 如果相册、博客、猫猫或留言板页面打开，不响应滚轮返回
-  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState) return;
+  // 如果任意全屏内页打开，不响应滚轮返回
+  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState || store.musicPageOpenState || store.panOpenState) return;
   
   if (showMainPage.value && window.scrollY <= 0 && event.deltaY < 0) {
     // 向上滚动且在主页面顶部时，返回太空页面
@@ -253,8 +262,8 @@ const handleTouchEnd = (event) => {
   touchEndY = event.changedTouches[0].clientY;
   const touchDiff = touchStartY - touchEndY;
   
-  // 如果相册、博客、猫猫或留言板页面打开，不响应触摸返回
-  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState) return;
+  // 如果任意全屏内页打开，不响应触摸返回
+  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState || store.musicPageOpenState || store.panOpenState) return;
   
   // 向上滑动返回太空页面（滑动距离大于50px）
   if (touchDiff > 50 && showMainPage.value) {
@@ -784,7 +793,9 @@ onBeforeUnmount(() => {
     .album,
     .blog,
     .cat,
-    .message-board {
+    .message-board,
+    .music-page,
+    .pan {
       &::-webkit-scrollbar {
         width: 7px;
       }
@@ -800,7 +811,9 @@ onBeforeUnmount(() => {
       }
     }
     
-    .message-board {
+    .message-board,
+    .music-page,
+    .pan {
       position: fixed;
       top: 0;
       left: 0;

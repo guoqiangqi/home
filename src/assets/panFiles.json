@@ -1,0 +1,22 @@
+{
+  "link": "https://pan.qicheng.love/",
+  "stationName": "QC · 数据空间站",
+  "totalSpace": 1024,
+  "usedSpace": 386,
+  "nodes": 3,
+  "uptime": "99.9",
+  "files": [
+    { "name": "星图集·银河旋臂.pdf", "desc": "高清星系结构图鉴合集", "size": "48.2 MB", "date": "2024-12-08", "type": "doc", "link": "" },
+    { "name": "深空摄影原片.zip", "desc": "猎户座星云长曝光素材", "size": "1.6 GB", "date": "2024-11-22", "type": "archive", "link": "" },
+    { "name": "极光延时.mp4", "desc": "北纬 68° 极光延时摄影", "size": "742 MB", "date": "2024-11-03", "type": "video", "link": "" },
+    { "name": "宇宙白噪音.flac", "desc": "深空射电信号助眠音轨", "size": "96.4 MB", "date": "2024-10-19", "type": "audio", "link": "" },
+    { "name": "空间站全景.jpg", "desc": "轨道舱外 360° 全景图", "size": "12.8 MB", "date": "2024-10-05", "type": "image", "link": "" },
+    { "name": "轨道计算工具.exe", "desc": "卫星轨道参数模拟器", "size": "58.3 MB", "date": "2024-09-27", "type": "app", "link": "" },
+    { "name": "任务日志归档.docx", "desc": "历次探索任务飞行日志", "size": "3.1 MB", "date": "2024-09-11", "type": "doc", "link": "" },
+    { "name": "星轨壁纸合集.zip", "desc": "4K 星空主题壁纸 60 张", "size": "684 MB", "date": "2024-08-30", "type": "archive", "link": "" },
+    { "name": "土星环特写.png", "desc": "卡西尼号探测影像修复版", "size": "9.7 MB", "date": "2024-08-14", "type": "image", "link": "" },
+    { "name": "舱内电台.mp3", "desc": "漫游者频道精选歌单", "size": "128 MB", "date": "2024-07-26", "type": "audio", "link": "" },
+    { "name": "发射倒计时.mp4", "desc": "猎鹰回收着陆全程记录", "size": "512 MB", "date": "2024-07-08", "type": "video", "link": "" },
+    { "name": "导航固件.bin", "desc": "深空探测器导航更新包", "size": "24.6 MB", "date": "2024-06-19", "type": "app", "link": "" }
+  ]
+}

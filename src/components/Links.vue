@@ -77,8 +77,12 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data) => {
-  if (data.name === "音乐" && store.musicClick) {
-    if (typeof $openList === "function") $openList();
+  if (data.name === "音乐") {
+    // 打开内部全屏音乐页面
+    store.musicPageOpenState = true;
+  } else if (data.name === "网盘") {
+    // 打开内部网盘页面
+    store.panOpenState = true;
   } else if (data.name === "相册") {
     // 打开内部相册页面
     store.albumOpenState = true;

@@ -1,36 +1,34 @@
 <template>
   <div class="message-board-container" @click.stop>
-    <!-- 背景装饰 -->
-    <div class="background-decoration">
-      <div class="floating-orb orb-1"></div>
-      <div class="floating-orb orb-2"></div>
-      <div class="floating-orb orb-3"></div>
-      <div class="gradient-overlay"></div>
+    <!-- 星云背景装饰 -->
+    <div class="nebula-decoration">
+      <div class="nebula nebula-1"></div>
+      <div class="nebula nebula-2"></div>
+      <div class="star-dust"></div>
+      <span class="float-glyph glyph-1">💬</span>
+      <span class="float-glyph glyph-2">✦</span>
+      <span class="float-glyph glyph-3">✉️</span>
+      <span class="float-glyph glyph-4">✧</span>
+      <span class="float-glyph glyph-5">💭</span>
     </div>
 
     <!-- 留言板头部 -->
     <div class="message-board-header">
       <div class="header-content">
         <div class="title-section">
-          <div class="title-wrapper">
-            <h1 class="message-board-title">
-              <span class="title-icon">💬</span>
-              <span class="title-text">留言板</span>
-            </h1>
-            <div class="title-underline"></div>
+          <div class="title-coords">
+            <span class="coord-dot"></span>
+            <span class="coord-text">SIGNAL · 星际信箱 · OPEN CHANNEL</span>
           </div>
-          <p class="message-board-subtitle">分享你的想法和感受，让这里成为思想的交汇点</p>
+          <h1 class="message-board-title">
+            <span class="title-text">留言信箱</span>
+          </h1>
+          <p class="message-board-subtitle">向星海深处发送一段讯息，静候回响穿越光年抵达</p>
         </div>
-        
-        <el-button 
-          class="close-btn"
-          @click="closeMessageBoard"
-          type="text"
-        >
-          <Icon size="20">
-            <CloseOne />
-          </Icon>
-        </el-button>
+
+        <div class="close-btn" @click.stop="closeMessageBoard" title="返回">
+          <Icon size="20"><CloseOne /></Icon>
+        </div>
       </div>
     </div>
 
@@ -38,16 +36,21 @@
     <div class="stats-section">
       <div class="stats-card">
         <div class="stat-item">
+          <div class="stat-icon">📡</div>
           <div class="stat-number">∞</div>
-          <div class="stat-label">无限可能</div>
+          <div class="stat-label">无限频段</div>
         </div>
+        <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="stat-number">💭</div>
-          <div class="stat-label">思想交流</div>
+          <div class="stat-icon">💭</div>
+          <div class="stat-number">思想</div>
+          <div class="stat-label">星际交流</div>
         </div>
+        <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="stat-number">🌟</div>
-          <div class="stat-label">灵感碰撞</div>
+          <div class="stat-icon">✨</div>
+          <div class="stat-number">灵感</div>
+          <div class="stat-label">跨越光年</div>
         </div>
       </div>
     </div>
@@ -136,17 +139,17 @@ const initTwikoo = async () => {
       twikooContainer.innerHTML = `
         <div class="error-container">
           <div class="error-content">
-            <div class="error-icon">😔</div>
-            <h3 class="error-title">评论系统暂时不可用</h3>
+            <div class="error-icon">🛰️</div>
+            <h3 class="error-title">信号暂时中断</h3>
             <p class="error-description">
-              我们正在努力修复这个问题。<br>
-              您可以稍后再试，或者联系网站管理员。
+              星际信箱正在重新校准天线。<br>
+              您可以稍后再试，或者联系站长。
             </p>
             <p class="error-details">
               错误信息: ${error.message}
             </p>
             <button class="retry-btn" onclick="window.retryInit && window.retryInit()">
-              重新加载
+              重新连接
             </button>
           </div>
         </div>
@@ -186,276 +189,249 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .message-board-container {
   position: relative;
-  padding: 0;
-  max-width: 1400px;
+  padding: 0 0 60px;
+  max-width: 1100px;
   margin: 0 auto;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: white;
+  min-height: 100vh;
+  color: #fff;
   overflow: hidden;
-  background: linear-gradient(135deg, 
-    rgba(102, 126, 234, 0.15) 0%, 
-    rgba(118, 75, 162, 0.1) 25%, 
-    rgba(102, 126, 234, 0.08) 50%, 
-    rgba(118, 75, 162, 0.12) 75%, 
-    rgba(102, 126, 234, 0.15) 100%
-  );
 }
 
-// Twikoo 评论样式
-:deep(.tk-comment) {
-  // backdrop-filter: blur(666px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 10px;
-}
-
-// 背景装饰
-.background-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+// 星云背景装饰
+.nebula-decoration {
+  position: fixed;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
-  
-  .floating-orb {
+
+  .nebula {
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.2));
-    backdrop-filter: blur(10px);
-    animation: float 6s ease-in-out infinite;
-    
-    &.orb-1 {
-      width: 120px;
-      height: 120px;
-      top: 10%;
-      left: 10%;
-      animation-delay: 0s;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: nebulaDrift 18s ease-in-out infinite;
+
+    &.nebula-1 {
+      width: 420px;
+      height: 420px;
+      top: -8%;
+      right: -6%;
+      background: radial-gradient(circle, rgba(167, 139, 255, 0.38), transparent 70%);
     }
-    
-    &.orb-2 {
-      width: 80px;
-      height: 80px;
-      top: 20%;
-      right: 15%;
-      animation-delay: 2s;
-    }
-    
-    &.orb-3 {
-      width: 100px;
-      height: 100px;
-      bottom: 20%;
-      left: 20%;
-      animation-delay: 4s;
+    &.nebula-2 {
+      width: 360px;
+      height: 360px;
+      bottom: 6%;
+      left: -8%;
+      background: radial-gradient(circle, rgba(78, 205, 196, 0.34), transparent 70%);
+      animation-delay: 5s;
     }
   }
-  
-  .gradient-overlay {
+
+  .star-dust {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 24% 26%, rgba(255, 255, 255, 0.7), transparent),
+      radial-gradient(1px 1px at 64% 66%, rgba(255, 255, 255, 0.5), transparent),
+      radial-gradient(1px 1px at 84% 28%, rgba(135, 206, 235, 0.6), transparent),
+      radial-gradient(1.5px 1.5px at 44% 80%, rgba(255, 255, 255, 0.5), transparent);
+    opacity: 0.55;
+    animation: twinkle 5s ease-in-out infinite;
+  }
+
+  .float-glyph {
+    position: absolute;
+    font-size: 1.6rem;
+    color: rgba(135, 206, 235, 0.5);
+    opacity: 0.18;
+    animation: glyphFloat 7s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(167, 139, 255, 0.2));
+
+    &.glyph-1 { top: 13%; left: 7%; animation-delay: 0s; font-size: 1.9rem; }
+    &.glyph-2 { top: 28%; right: 9%; animation-delay: 1.4s; }
+    &.glyph-3 { bottom: 30%; left: 10%; animation-delay: 2.6s; font-size: 1.8rem; }
+    &.glyph-4 { bottom: 18%; right: 12%; animation-delay: 0.8s; }
+    &.glyph-5 { top: 60%; left: 48%; animation-delay: 3.4s; }
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(180deg);
-  }
+@keyframes nebulaDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 20px) scale(1.08); }
 }
 
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes glyphFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.14; }
+  50% { transform: translateY(-22px) rotate(8deg); opacity: 0.3; }
+}
+
+// 头部
 .message-board-header {
   position: relative;
   z-index: 1;
-  padding: 0px 30px 20px;
-  flex-shrink: 0;
-  
+  padding: 50px 30px 10px;
+
   .header-content {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    
-    .title-section {
-      flex: 1;
-      text-align: center;
-      
-      .title-wrapper {
-        display: inline-block;
-        position: relative;
-        margin-bottom: 15px;
-        
-        .message-board-title {
-          font-size: 3.5rem;
-          font-weight: 800;
-          margin: 0;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradientShift 3s ease-in-out infinite;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 15px;
-          
-          .title-icon {
-            font-size: 3rem;
-            animation: pulse 2s ease-in-out infinite;
-          }
-          
-          .title-text {
-            position: relative;
-            
-            &::after {
-              content: '';
-              position: absolute;
-              bottom: -5px;
-              left: 0;
-              width: 100%;
-              height: 2px;
-              background: linear-gradient(90deg, transparent, #667eea, transparent);
-              transform: scaleX(0);
-              animation: titleUnderline 2s ease-in-out infinite;
-            }
-          }
-        }
-        
-        .title-underline {
-          position: absolute;
-          bottom: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 60%;
-          height: 3px;
-          background: linear-gradient(90deg, transparent, #667eea, #764ba2, #667eea, transparent);
-          border-radius: 2px;
-          opacity: 0.6;
-        }
-      }
-      
-      .message-board-subtitle {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        margin: 0;
-        line-height: 1.6;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.9);
-        max-width: 600px;
-        margin: 0 auto;
+  }
+
+  .title-section {
+    flex: 1;
+    text-align: center;
+
+    .title-coords {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "UnidreamLED", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      color: rgba(135, 206, 235, 0.55);
+      margin-bottom: 16px;
+
+      .coord-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4ecdc4;
+        box-shadow: 0 0 8px rgba(78, 205, 196, 0.8);
+        animation: coordPulse 2.5s ease-in-out infinite;
       }
     }
-    
-    .close-btn {
-      color: white;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      margin-top: 30px;
-      
-      &:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: scale(1.1);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+
+    .message-board-title {
+      font-size: 3.4rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: 4px;
+
+      .title-text {
+        background: linear-gradient(135deg, #87ceeb 0%, #4ecdc4 45%, #a78bff 100%);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 5s ease-in-out infinite;
+        text-shadow: 0 0 40px rgba(78, 205, 196, 0.15);
       }
+    }
+
+    .message-board-subtitle {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 14px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
     }
   }
+
+  .close-btn {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(78, 205, 196, 0.18);
+      border-color: rgba(78, 205, 196, 0.4);
+      transform: scale(1.08) rotate(90deg);
+      box-shadow: 0 4px 20px rgba(78, 205, 196, 0.25);
+    }
+  }
+}
+
+@keyframes coordPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 // 统计信息区域
 .stats-section {
   position: relative;
   z-index: 1;
-  padding: 0 30px 15px;
-  flex-shrink: 0;
-  
+  padding: 22px 30px 6px;
+
   .stats-card {
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 50px;
-    padding: 10px 20px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(15px);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    
+    gap: 30px;
+    padding: 18px 30px;
+    max-width: 620px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 14px 36px rgba(0, 0, 8, 0.3);
+
     .stat-item {
       text-align: center;
       transition: transform 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-2px);
+
+      &:hover { transform: translateY(-3px); }
+
+      .stat-icon {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
       }
-      
+
       .stat-number {
-        font-size: 1.6rem;
-        font-weight: bold;
-        margin-bottom: 3px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #87ceeb, #4ecdc4);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
-      
+
       .stat-label {
         font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.8);
-        font-weight: 500;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 3px;
+        letter-spacing: 0.5px;
       }
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.15), transparent);
     }
   }
 }
 
+// Twikoo 区域
 .twikoo-section {
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
   position: relative;
   z-index: 1;
-  padding: 0 30px 30px;
-  
+  padding: 24px 30px 0;
+
   .twikoo-container {
-    height: 100%;
-    overflow-y: auto;
-    padding-right: 10px;
-    
     .twikoo-comments {
-      padding: 20px 0;
-    }
-    
-    // 自定义滚动条样式
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.6), rgba(118, 75, 162, 0.6));
-      border-radius: 4px;
-      
-      &:hover {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
-      }
+      padding: 8px 0;
     }
   }
 }
@@ -465,178 +441,96 @@ onUnmounted(() => {
   text-align: center;
   padding: 60px 20px;
   color: rgba(255, 255, 255, 0.9);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
   border-radius: 20px;
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
   .error-content {
     max-width: 500px;
     margin: 0 auto;
-    
+
     .error-icon {
       font-size: 4rem;
       margin-bottom: 20px;
-      animation: bounce 2s ease-in-out infinite;
+      animation: floatY 3s ease-in-out infinite;
     }
-    
+
     .error-title {
       margin-bottom: 15px;
-      color: #667eea;
+      color: #4ecdc4;
       font-size: 1.5rem;
       font-weight: 600;
     }
-    
+
     .error-description {
       margin-bottom: 20px;
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.75);
     }
-    
+
     .error-details {
       font-size: 0.85rem;
-      opacity: 0.6;
+      opacity: 0.5;
       margin-top: 15px;
       color: rgba(255, 255, 255, 0.6);
     }
-    
+
     .retry-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-      border: none;
-      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(167, 139, 255, 0.3));
+      border: 1px solid rgba(78, 205, 196, 0.5);
+      border-radius: 30px;
       color: white;
-      padding: 15px 30px;
+      padding: 13px 32px;
       cursor: pointer;
       font-weight: 500;
       font-size: 1rem;
       transition: all 0.3s ease;
       margin-top: 20px;
-      
+
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 22px rgba(78, 205, 196, 0.35);
       }
     }
   }
 }
 
-// 动画定义
-@keyframes gradientShift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-@keyframes titleUnderline {
-  0%, 100% {
-    transform: scaleX(0);
-  }
-  50% {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 // 响应式设计
 @media (max-width: 768px) {
-  .message-board-container {
-    padding: 0;
-  }
-  
   .message-board-header {
-    padding: 30px 20px 15px;
-    
-    .header-content {
-      .title-section {
-        .title-wrapper {
-          .message-board-title {
-            font-size: 2.5rem;
-            flex-direction: column;
-            gap: 10px;
-            
-            .title-icon {
-              font-size: 2.5rem;
-            }
-          }
-        }
-        
-        .message-board-subtitle {
-          font-size: 1rem;
-          padding: 0 10px;
-        }
-      }
-      
-      .close-btn {
-        width: 45px;
-        height: 45px;
-      }
-    }
+    padding: 36px 18px 6px;
+
+    .title-section .message-board-title { font-size: 2.4rem; }
+    .title-section .message-board-subtitle { font-size: 0.9rem; padding: 0 10px; }
   }
-  
+
   .stats-section {
-    padding: 0 20px 10px;
-    
+    padding: 18px 18px 4px;
+
     .stats-card {
-      gap: 25px;
-      padding: 8px 15px;
-      
-      .stat-item {
-        .stat-number {
-          font-size: 1.5rem;
-        }
-        
-        .stat-label {
-          font-size: 0.65rem;
-        }
-      }
+      gap: 16px;
+      padding: 14px 16px;
     }
   }
-  
+
   .twikoo-section {
-    padding: 0 20px 20px;
+    padding: 18px 18px 0;
   }
 }
 
 @media (max-width: 480px) {
-  .stats-section {
-    .stats-card {
-      flex-direction: column;
-      gap: 12px;
-      padding: 6px 12px;
-      
-      .stat-item {
-        .stat-number {
-          font-size: 1.4rem;
-        }
-        
-        .stat-label {
-          font-size: 0.6rem;
-        }
-      }
-    }
+  .stats-section .stats-card {
+    gap: 12px;
+    padding: 12px;
+
+    .stat-item .stat-icon { font-size: 1.2rem; }
+    .stat-divider { height: 32px; }
   }
 }
-</style> 
+</style>
