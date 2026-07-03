@@ -20,6 +20,8 @@
           :transparent="false"
         />
       </div>
+      <!-- 银河系照片层：独立于 galaxy-bg，始终在极光下方可见 -->
+      <div class="milkyway-photo" :class="{ 'milkyway-warp': isExiting }" />
 
       <Transition name="aurora-fade">
         <div
@@ -160,12 +162,53 @@ onBeforeUnmount(() => {
       filter: blur(14px) brightness(1.6);
       opacity: 0;
     }
+
+  }
+
+  // 银河系照片层：与 galaxy-bg 同步穿越，始终在极光下方可见
+  .milkyway-photo {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      url('/textures/galaxy/2k_stars_milky_way.jpg') center center / cover no-repeat;
+    mix-blend-mode: lighten;
+    opacity: 0.85;
+    filter: brightness(1.4) saturate(1.2);
+    // 轻微旋转让银河带斜穿画面，更有宇宙纵深感
+    transform: rotate(-18deg) scale(1.3);
+    // 四周径向遮罩羽化，边缘自然融入深空背景
+    -webkit-mask-image: radial-gradient(
+      ellipse 100% 90% at 50% 52%,
+      #000 0%,
+      #000 45%,
+      rgba(0,0,0,0.7) 72%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 100% 90% at 50% 52%,
+      #000 0%,
+      #000 45%,
+      rgba(0,0,0,0.7) 72%,
+      transparent 100%
+    );
+    transition:
+      transform 2s cubic-bezier(0.55, 0.06, 0.22, 0.99),
+      filter 1.6s ease-out,
+      opacity 0.6s ease-out 1.4s;
+
+    &.milkyway-warp {
+      transform: rotate(-18deg) scale(3.64) translateZ(320px);
+      filter: brightness(1.4) saturate(1.2) blur(14px) brightness(1.6);
+      opacity: 0;
+    }
   }
 
   .aurora-layer {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
     mix-blend-mode: screen;
     // 用柔和的椭圆遮罩把极光四周渐隐，消除展开后明显的硬边界，使其融入星空背景
