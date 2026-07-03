@@ -18,6 +18,7 @@
           :speed="0.5"
           :rotation-speed="0.04"
           :transparent="false"
+          :repulsion-strength="0.6"
         />
       </div>
       <!-- 银河系照片层：独立于 galaxy-bg，始终在极光下方可见 -->
@@ -53,7 +54,7 @@
               :band-center="0.5"
               :band-spread="0.3"
               :enable-mouse-interaction="true"
-              :mouse-influence="1.0"
+              :mouse-influence="0.3"
             />
           </div>
         </div>
