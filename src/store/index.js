@@ -14,6 +14,7 @@ export const mainStore = defineStore("main", {
       musicOpenState: false, // 音乐面板开启状态
       musicPageOpenState: false, // 全屏音乐页面开启状态
       panOpenState: false, // 网盘页面开启状态
+      shipOpenState: false, // 星舰页面开启状态
       backgroundShow: false, // 壁纸展示状态
       boxOpenState: false, // 盒子开启状态
       mobileOpenState: false, // 移动端开启状态

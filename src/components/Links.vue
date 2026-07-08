@@ -24,6 +24,7 @@
           <el-col v-for="(item, index) in site" :span="8" :key="item">
             <div
               class="item cards"
+              :class="{ 'ship-entry': item.name === '星舰' }"
               :style="index < 3 ? 'margin-bottom: 20px' : null"
               @click="jumpLink(item)"
             >
@@ -43,7 +44,7 @@
 <script setup>
 import { Icon } from "@vicons/utils";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
-import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode, Camera, Cat, Clipboard } from "@vicons/fa"; // 注意使用正确的类别
+import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode, Camera, Cat, Clipboard, Rocket } from "@vicons/fa"; // 注意使用正确的类别
 import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";
@@ -72,7 +73,8 @@ const siteIcon = {
   LaptopCode,
   Camera,
   Cat,
-  Clipboard
+  Clipboard,
+  Rocket,
 };
 
 // 链接跳转
@@ -95,6 +97,9 @@ const jumpLink = (data) => {
   } else if (data.name === "留言板") {
     // 打开内部留言板页面
     store.messageBoardOpenState = true;
+  } else if (data.name === "星舰") {
+    // 打开内部星舰页面
+    store.shipOpenState = true;
   } else {
     window.open(data.link, "_blank");
   }
@@ -175,6 +180,27 @@ onMounted(() => {
       .name {
         font-size: 1.1rem;
         margin-left: 8px;
+      }
+
+      // 星舰入口特殊配色
+      &.ship-entry {
+        background: linear-gradient(135deg, rgba(0, 30, 60, 0.55), rgba(20, 60, 80, 0.4));
+        border: 1px solid rgba(78, 205, 196, 0.35);
+        border-radius: 12px;
+        color: #4ecdc4;
+        box-shadow: 0 0 12px rgba(78, 205, 196, 0.12), inset 0 1px 0 rgba(78, 205, 196, 0.1);
+        transition: all 0.3s ease;
+
+        .name { color: #4ecdc4; text-shadow: 0 0 8px rgba(78, 205, 196, 0.6); }
+
+        :deep(svg) { color: #4ecdc4; filter: drop-shadow(0 0 5px rgba(78, 205, 196, 0.7)); }
+
+        &:hover {
+          background: linear-gradient(135deg, rgba(0, 50, 80, 0.65), rgba(30, 80, 100, 0.5));
+          border-color: rgba(78, 205, 196, 0.7);
+          box-shadow: 0 0 22px rgba(78, 205, 196, 0.28), inset 0 1px 0 rgba(78, 205, 196, 0.15);
+          transform: scale(1.04);
+        }
       }
       @media (min-width: 720px) and (max-width: 820px) {
         .name {

@@ -42,16 +42,6 @@
           </div>
         </div>
 
-        <div class="space-mission">
-          <div class="space-elements">
-            <span class="space-element el-1">🚀</span>
-            <span class="space-element el-2">🛸</span>
-            <span class="space-element el-3">🛰️</span>
-            <span class="space-element el-4">☄️</span>
-            <span class="space-element el-5">🌌</span>
-          </div>
-        </div>
-
         <div class="scroll-hint">
           <div class="scroll-text">向下滚动开始探索</div>
           <div class="scroll-arrow-container">
@@ -60,13 +50,22 @@
           </div>
         </div>
 
+        <!-- 时空穿梭遮罩 -->
+        <Transition name="warp-overlay-fade">
+          <div class="warp-overlay" v-if="easterEggWarping">
+            <div class="warp-lines"></div>
+            <div class="warp-center-glow"></div>
+            <div class="warp-text">INITIATING WARP DRIVE</div>
+          </div>
+        </Transition>
+
         <div class="scroll-area"></div>
       </div>
-      
+
       <!-- 主内容页面 -->
-      <div v-else class="main-page" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
+      <div v-if="showMainPage" class="main-page" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
         <div class="container" v-show="!store.backgroundShow">
-          <section class="all" v-show="!store.setOpenState && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState && !store.musicPageOpenState && !store.panOpenState">
+          <section class="all" v-show="!store.setOpenState && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState && !store.musicPageOpenState && !store.panOpenState && !store.shipOpenState">
             <MainLeft />
             <MainRight v-show="!store.boxOpenState" />
             <Box v-show="store.boxOpenState" />
@@ -93,6 +92,9 @@
           <section class="pan" v-show="store.panOpenState" @click="store.panOpenState = false">
             <Pan />
           </section>
+          <section class="starship" v-if="store.shipOpenState" @click.self="store.shipOpenState = false">
+            <Starship />
+          </section>
         </div>
         
         <!-- 移动端菜单按钮 -->
@@ -111,7 +113,7 @@
         </Transition>
         
         <!-- 返回提示 -->
-        <div class="return-hint" v-show="showMainPage && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState && !store.musicPageOpenState && !store.panOpenState">
+        <div class="return-hint" v-show="showMainPage && !store.albumOpenState && !store.blogOpenState && !store.catOpenState && !store.messageBoardOpenState && !store.musicPageOpenState && !store.panOpenState && !store.shipOpenState">
           <div class="hint-content">
             <div class="hint-icon">↑</div>
             <p>向上滑动返回太空页面</p>
@@ -126,6 +128,27 @@
         />
       </div>
     </main>
+  </Transition>
+
+  <!-- 星舰浮动入口：位于所有层级之外，fixed 定位不受 containing block 影响 -->
+  <Transition name="sfe-fade">
+    <div
+      v-if="!showMainPage && store.splashDone"
+      class="starship-float-entry"
+      :class="{ 'entry-active': easterEggHovered, 'entry-warp': easterEggWarping }"
+      @mouseenter="onEggHover(true)"
+      @mouseleave="onEggHover(false)"
+      @click="onEggClick"
+    >
+      <div class="sfe-glow-ring sfe-ring-1"></div>
+      <div class="sfe-glow-ring sfe-ring-2"></div>
+      <StarshipMiniCanvas class="sfe-ship" :size="miniCanvasSize" :warp="easterEggWarping" />
+      <Transition name="signal-hint-fade">
+        <div class="sfe-hint" v-if="easterEggHovered && !easterEggWarping">
+          <span class="sh-text">进入星舰 · SECTOR-∞</span>
+        </div>
+      </Transition>
+    </div>
   </Transition>
 </template>
 
@@ -149,8 +172,10 @@ import Cat from "@/views/Cat/index.vue";
 import MessageBoard from "@/views/MessageBoard/index.vue";
 import MusicPage from "@/views/Music/index.vue";
 import Pan from "@/views/Pan/index.vue";
+import Starship from "@/views/Starship/index.vue";
 import SpaceBackground from "@/components/SpaceBackground.vue";
 import WallpaperSelector from "@/components/WallpaperSelector.vue";
+import StarshipMiniCanvas from "@/components/StarshipMiniCanvas.vue";
 import Experience from "@/galaxy/js/experience.js";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
@@ -160,6 +185,32 @@ const showMainPage = ref(false);
 const backgroundRef = ref(null);
 const spaceRevealing = ref(false);
 const warpLanded = ref(false);
+
+// 星舰缩略 canvas 尺寸（响应式）
+const miniCanvasSize = window.innerWidth < 768 ? 54 : 72
+
+// 彩蛋：星舰入口
+const easterEggHovered = ref(false);
+const easterEggWarping = ref(false);
+let eggWarpTimer = null;
+
+const onEggHover = (v) => {
+  if (easterEggWarping.value) return;
+  easterEggHovered.value = v;
+};
+
+const onEggClick = () => {
+  if (easterEggWarping.value) return;
+  easterEggWarping.value = true;
+  easterEggHovered.value = false;
+  // 时空穿梭动画结束后打开星舰
+  eggWarpTimer = setTimeout(() => {
+    easterEggWarping.value = false;
+    // 确保先切到主页面（starship 在主页中显示）
+    showMainPage.value = true;
+    store.shipOpenState = true;
+  }, 1600);
+};
 
 const spaceStatusText = computed(() => {
   if (spaceRevealing.value && !warpLanded.value) return "WARP IN PROGRESS";
@@ -243,7 +294,7 @@ const handleScroll = () => {
 // 鼠标滚轮事件
 const handleWheel = (event) => {
   // 如果任意全屏内页打开，不响应滚轮返回
-  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState || store.musicPageOpenState || store.panOpenState) return;
+  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState || store.musicPageOpenState || store.panOpenState || store.shipOpenState) return;
   
   if (showMainPage.value && window.scrollY <= 0 && event.deltaY < 0) {
     // 向上滚动且在主页面顶部时，返回太空页面
@@ -263,7 +314,7 @@ const handleTouchEnd = (event) => {
   const touchDiff = touchStartY - touchEndY;
   
   // 如果任意全屏内页打开，不响应触摸返回
-  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState || store.musicPageOpenState || store.panOpenState) return;
+  if (store.albumOpenState || store.blogOpenState || store.catOpenState || store.messageBoardOpenState || store.musicPageOpenState || store.panOpenState || store.shipOpenState) return;
   
   // 向上滑动返回太空页面（滑动距离大于50px）
   if (touchDiff > 50 && showMainPage.value) {
@@ -352,6 +403,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   if (coordsInterval) clearInterval(coordsInterval);
+  if (eggWarpTimer) clearTimeout(eggWarpTimer);
   window.removeEventListener("resize", getWidth);
   window.removeEventListener("scroll", handleScroll);
   window.removeEventListener("wheel", handleWheel);
@@ -551,6 +603,299 @@ onBeforeUnmount(() => {
 .scroll-area {
   height: 100vh;
   width: 100%;
+}
+
+// ── 星舰浮动入口（右下角明显展示）────────────────────────────────────
+.starship-float-entry {
+  position: fixed;
+  bottom: 14vh;
+  right: 4vw;
+  z-index: 13;
+  width: 72px;
+  height: 72px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .sfe-ship {
+    display: block;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.7)) drop-shadow(0 0 24px rgba(100, 160, 255, 0.35));
+    animation: shipFloat 4s ease-in-out infinite, shipFlicker 3.2s ease-in-out infinite;
+    transform-origin: center;
+    transition: filter 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .sfe-glow-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+
+    &.sfe-ring-1 {
+      width: 72px;
+      height: 72px;
+      border: 1px solid rgba(78, 205, 196, 0.55);
+      box-shadow: 0 0 8px rgba(78, 205, 196, 0.2);
+      animation: sfeRingPulse 2.8s ease-out infinite;
+    }
+    &.sfe-ring-2 {
+      width: 100px;
+      height: 100px;
+      border: 1px solid rgba(126, 184, 255, 0.22);
+      animation: sfeRingPulse 2.8s ease-out infinite 0.9s;
+    }
+  }
+
+  .sfe-hint {
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    padding: 5px 14px;
+    background: rgba(0, 6, 20, 0.9);
+    border: 1px solid rgba(78, 205, 196, 0.4);
+    border-radius: 20px;
+    font-family: 'UnidreamLED', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
+    color: rgba(78, 205, 196, 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 14px rgba(78, 205, 196, 0.15);
+    pointer-events: none;
+
+    .sh-icon { font-size: 0.75rem; }
+  }
+
+  &:hover .sfe-ship, &.entry-active .sfe-ship {
+    filter: drop-shadow(0 0 18px rgba(78, 205, 196, 1)) drop-shadow(0 0 36px rgba(100, 180, 255, 0.5));
+    transform: scale(1.12);
+    animation: shipFloat 4s ease-in-out infinite;
+  }
+
+  &.entry-warp .sfe-ship {
+    filter: drop-shadow(0 0 28px rgba(78, 205, 196, 1)) drop-shadow(0 0 60px rgba(100, 180, 255, 0.8));
+    transform: scale(0.55) translateY(-24px);
+    transition: filter 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (max-width: 768px) {
+    bottom: 12vh;
+    right: 5vw;
+    width: 54px;
+    height: 54px;
+    .sfe-ring-1 { width: 54px; height: 54px; }
+    .sfe-ring-2 { width: 72px; height: 72px; }
+  }
+}
+
+@keyframes shipFloat {
+  0%, 100% { transform: translateY(0px) rotate(-8deg); }
+  25% { transform: translateY(-7px) rotate(-5deg); }
+  50% { transform: translateY(-12px) rotate(-8deg); }
+  75% { transform: translateY(-7px) rotate(-11deg); }
+}
+
+@keyframes shipFlicker {
+  0%, 100% { opacity: 0.88; filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.7)) drop-shadow(0 0 24px rgba(100, 160, 255, 0.35)) brightness(1.05); }
+  25% { opacity: 1;    filter: drop-shadow(0 0 16px rgba(78, 205, 196, 0.9)) drop-shadow(0 0 32px rgba(100, 180, 255, 0.5)) brightness(1.15); }
+  50% { opacity: 0.78; filter: drop-shadow(0 0 6px rgba(78, 205, 196, 0.45)) drop-shadow(0 0 14px rgba(100, 140, 255, 0.2)) brightness(0.95); }
+  75% { opacity: 0.92; filter: drop-shadow(0 0 12px rgba(126, 184, 255, 0.7)) drop-shadow(0 0 28px rgba(78, 205, 196, 0.4)) brightness(1.1); }
+}
+
+@keyframes sfeRingPulse {
+  0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+}
+
+.sfe-fade-enter-active { transition: opacity 0.8s ease 0.4s, transform 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s; }
+.sfe-fade-leave-active { transition: opacity 0.4s ease; }
+.sfe-fade-enter-from, .sfe-fade-leave-to { opacity: 0; transform: translateY(12px) scale(0.9); }
+
+// ── 彩蛋：星舰异常信号入口 ──────────────────────────────────────────
+.easter-egg-signal {
+  position: fixed;
+  bottom: 18vh;
+  right: 5vw;
+  z-index: 12;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  // 平时极其低调：透明度很低
+  opacity: 0.18;
+  transition: opacity 0.6s ease, transform 0.4s ease;
+
+  &:hover, &.signal-active {
+    opacity: 0.85;
+    transform: scale(1.15);
+  }
+
+  &.signal-warp {
+    opacity: 1;
+    transform: scale(2.5);
+    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .signal-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #4ecdc4;
+    box-shadow: 0 0 6px 2px rgba(78, 205, 196, 0.8);
+    animation: eggCoreGlow 3s ease-in-out infinite;
+  }
+
+  .signal-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(78, 205, 196, 0.5);
+    animation: eggRingPulse 3s ease-out infinite;
+
+    &.signal-ring-1 {
+      width: 14px; height: 14px;
+      animation-delay: 0s;
+    }
+    &.signal-ring-2 {
+      width: 26px; height: 26px;
+      border-color: rgba(78, 205, 196, 0.3);
+      animation-delay: 0.5s;
+    }
+    &.signal-ring-3 {
+      width: 40px; height: 40px;
+      border-color: rgba(135, 206, 235, 0.15);
+      animation-delay: 1s;
+    }
+  }
+
+  .signal-hint {
+    position: absolute;
+    right: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    padding: 5px 12px;
+    background: rgba(0, 8, 24, 0.82);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    border-radius: 20px;
+    font-family: 'UnidreamLED', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    color: rgba(135, 206, 235, 0.8);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+
+    .sh-icon { color: #4ecdc4; font-size: 0.7rem; }
+  }
+}
+
+@keyframes eggCoreGlow {
+  0%, 100% { box-shadow: 0 0 6px 2px rgba(78, 205, 196, 0.7); }
+  50% { box-shadow: 0 0 10px 4px rgba(78, 205, 196, 1.0), 0 0 20px 6px rgba(78, 205, 196, 0.4); }
+}
+
+@keyframes eggRingPulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+
+// 提示文字淡入淡出
+.signal-hint-fade-enter-active, .signal-hint-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.signal-hint-fade-enter-from, .signal-hint-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-50%) translateX(8px);
+}
+
+// ── 时空穿梭遮罩 ─────────────────────────────────────────────────────
+.warp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: radial-gradient(ellipse at center, rgba(0, 20, 40, 0.0) 0%, rgba(0, 8, 24, 0.95) 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  .warp-lines {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(78, 205, 196, 0.03) 0.5deg,
+        transparent 1deg
+      );
+    animation: warpSpin 0.6s linear infinite;
+    transform-origin: center;
+  }
+
+  .warp-center-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(78, 205, 196, 0.6) 0%, rgba(100, 130, 255, 0.3) 40%, transparent 70%);
+    animation: warpGlow 0.4s ease-in-out infinite alternate;
+  }
+
+  .warp-text {
+    position: relative;
+    font-family: 'UnidreamLED', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    color: rgba(135, 206, 235, 0.85);
+    text-shadow: 0 0 12px rgba(78, 205, 196, 0.8);
+    animation: warpTextFlicker 0.3s ease-in-out infinite;
+  }
+}
+
+@keyframes warpSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes warpGlow {
+  from { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+  to { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+}
+
+@keyframes warpTextFlicker {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; text-shadow: 0 0 20px rgba(78, 205, 196, 1.0); }
+}
+
+.warp-overlay-fade-enter-active {
+  transition: opacity 0.25s ease;
+}
+.warp-overlay-fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.warp-overlay-fade-enter-from, .warp-overlay-fade-leave-to {
+  opacity: 0;
 }
 
 @keyframes bounce {
@@ -824,6 +1169,18 @@ onBeforeUnmount(() => {
       z-index: 2;
       animation: fade 0.5s;
       overflow-y: auto;
+    }
+
+    .starship {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000818;
+      z-index: 2;
+      animation: fade 0.5s;
+      overflow: hidden;
     }
     
     @media (max-width: 1200px) {
