@@ -44,7 +44,7 @@ export default class ShieldEffect {
     this.material = new THREE.ShaderMaterial({
       uniforms: {
         uTime:    { value: 0 },
-        uColor:   { value: new THREE.Color('#4ecdc4') },
+        uColor:   { value: new THREE.Color('#9ee8e3') },
         uOpacity: { value: 0 },
         uPixel:   { value: 1 }, // 像素比，用于点大小
       },

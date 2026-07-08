@@ -915,6 +915,12 @@ onBeforeUnmount(() => {
   }
 }
 
+// 星舰页面入场：保持不透明，仅微缩放，避免背后桌面页面闪现
+@keyframes starshipIn {
+  from { transform: scale(1.04); }
+  to   { transform: scale(1); }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -1179,7 +1185,7 @@ onBeforeUnmount(() => {
       height: 100%;
       background-color: #000818;
       z-index: 2;
-      animation: fade 0.5s;
+      animation: starshipIn 0.4s ease;
       overflow: hidden;
     }
     

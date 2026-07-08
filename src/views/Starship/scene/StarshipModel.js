@@ -358,7 +358,7 @@ export default class StarshipModel {
     const layers     = new Float32Array(COUNT)
 
     for (let i = 0; i < COUNT; i++) {
-      lifetimes[i] = 0.35 + Math.random() * 0.55  // 延长寿命，尾焰更长
+      lifetimes[i] = 0.2 + Math.random() * 0.3   // 缩短寿命，尾焰更短
       ages[i]      = Math.random() * lifetimes[i]
       layers[i]    = Math.floor(Math.random() * 3)  // 0/1/2
       this._resetParticle(i, positions, velocities)
@@ -468,7 +468,7 @@ export default class StarshipModel {
     // 两个引擎喷口，Z 轴左右对称，喷口本身收紧
     const side    = i % 2 === 0 ? 1 : -1
     const engineZ = side * spreadZ
-    const engineX = tailX - 0.20   // 紧贴飞船尾部发动机（向船体内侧 0.20，挨着船体）
+    const engineX = tailX + 0.05   // 稍微远离飞船尾部发动机（向外 0.05）
     const engineY = 0.0
 
     // 喷口出生扩散极小，形成细腻的锥形束
@@ -479,9 +479,9 @@ export default class StarshipModel {
 
     // 层级决定速度：核心快而直，外晕慢而散
     const layer = this._thrusterSystem?.layers?.[i] ?? (i % 3)
-    const baseSpeed  = layer === 0 ? (3.0 + Math.random() * 1.0)   // 核心：快
-                     : layer === 1 ? (2.2 + Math.random() * 0.8)   // 中温：中
-                                   : (1.4 + Math.random() * 0.6)   // 外晕：慢
+    const baseSpeed  = layer === 0 ? (2.0 + Math.random() * 0.6)   // 核心：快
+                     : layer === 1 ? (1.5 + Math.random() * 0.5)   // 中温：中
+                                   : (1.0 + Math.random() * 0.4)   // 外晕：慢
     // 横向扩散角：核心窄（0.05），外晕宽（0.20）
     const spread = layer === 0 ? 0.05 : layer === 1 ? 0.12 : 0.22
     velocities[i * 3]     = baseSpeed

@@ -109,7 +109,7 @@ const toastMsg = ref('')
 const shipState = reactive({
   exploded: false,
   shieldOn: false,
-  engineOn: true,
+  engineOn: false,
   spotLightOn: false,
   autoRotate: true,
   rotateSpeed: 0.3,

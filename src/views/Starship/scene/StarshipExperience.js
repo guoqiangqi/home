@@ -21,7 +21,7 @@ export default class StarshipExperience {
     this.state = {
       exploded: false,
       shieldOn: false,
-      engineOn: true,
+      engineOn: false,
       autoRotate: true,
       rotateSpeed: 0.3,
       lightColor: '#4ecdc4',
