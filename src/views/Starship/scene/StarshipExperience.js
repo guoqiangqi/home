@@ -75,7 +75,8 @@ export default class StarshipExperience {
 
   _initCamera() {
     this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 200)
-    this.camera.position.set(0, 1, 4)
+    // 斜俯视 3/4 视角，能同时看到飞船长度、宽度和顶部
+    this.camera.position.set(2.8, 4.0, 3.6)
     this.camera.lookAt(0, 0, 0)
   }
 
@@ -120,6 +121,9 @@ export default class StarshipExperience {
           this.shield.setVisible(false)
           this.shield.syncPixelRatio(this.renderer)
         }
+        // 同步初始引擎状态（默认关闭）
+        this.model?.setEngineOn(this.state.engineOn)
+        this.lighting?.setEngineLights(this.state.engineOn)
       },
     })
   }

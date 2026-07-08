@@ -439,6 +439,7 @@ export default class StarshipModel {
     geo.setAttribute('layer', layerAttr)
 
     const points = new THREE.Points(geo, mat)
+    points.visible = false   // 默认不可见，由 setEngineOn 控制
     this._thrusterGroup.add(points)
 
     this._thrusterSystem = {
@@ -451,7 +452,7 @@ export default class StarshipModel {
       ageAttr,
       layerAttr,
       count: COUNT,
-      on: true,
+      on: false,
     }
   }
 

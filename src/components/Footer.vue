@@ -78,7 +78,7 @@ const siteUrl = computed(() => {
   line-height: 46px;
   text-align: center;
   z-index: 0;
-  font-size: 14px;
+  font-size: 12px;
   // 文字不换行
   word-break: keep-all;
   white-space: nowrap;
@@ -110,16 +110,16 @@ const siteUrl = computed(() => {
   &.blur {
     backdrop-filter: blur(10px);
     background: rgb(0 0 0 / 25%);
-    font-size: 16px;
+    font-size: 13px;
   }
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity 0.15s ease-in-out;
   }
   @media (max-width: 720px) {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     &.blur {
-      font-size: 0.9rem;
+      font-size: 0.75rem;
     }
   }
   @media (max-width: 560px) {
