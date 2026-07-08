@@ -23,7 +23,7 @@ export default class StarshipExperience {
       shieldOn: false,
       engineOn: false,
       autoRotate: true,
-      rotateSpeed: 0.3,
+      rotateSpeed: 0.2,
       lightColor: '#4ecdc4',
       lightIntensity: 1.5,
       ambientPreset: 'cruise', // 'cruise' | 'combat' | 'silent'
