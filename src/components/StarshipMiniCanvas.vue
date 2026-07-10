@@ -54,7 +54,7 @@ const init = () => {
   scene.add(rimLight)
 
   const loader = new GLTFLoader()
-  loader.load('/models/Meshy_AI_Nebula_Voyager_0708012512_texture.glb', (gltf) => {
+  loader.load('/models/starship_texture.glb', (gltf) => {
     model = gltf.scene
 
     // 自动居中 + 缩放适配

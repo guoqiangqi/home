@@ -185,7 +185,7 @@ export default class StarshipModel {
     loader.setDRACOLoader(dracoLoader)
 
     loader.load(
-      '/models/Meshy_AI_Nebula_Voyager_0708012512_texture.glb',
+      '/models/starship_texture.glb',
       (gltf) => {
         this._setup(gltf)
         onReady?.()
