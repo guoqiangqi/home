@@ -15,7 +15,7 @@ const props = defineProps({
 const canvasRef = ref(null)
 
 let renderer, scene, camera, model, animId
-let rotY = 0
+let t = 0
 
 const init = () => {
   const canvas = canvasRef.value
@@ -31,8 +31,8 @@ const init = () => {
   scene = new THREE.Scene()
 
   camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100)
-  camera.position.set(0.6, 0.8, 2.2)
-  camera.lookAt(0, 0, 0)
+  camera.position.set(0, 0.15, 2.4)
+  camera.lookAt(0, 0.15, 0)
 
   // 环境光
   const ambient = new THREE.AmbientLight(0x4ecdc4, 0.6)
@@ -54,7 +54,7 @@ const init = () => {
   scene.add(rimLight)
 
   const loader = new GLTFLoader()
-  loader.load('/models/starship_texture.glb', (gltf) => {
+  loader.load('/models/astronaut_texture.glb', (gltf) => {
     model = gltf.scene
 
     // 自动居中 + 缩放适配
@@ -63,7 +63,8 @@ const init = () => {
     const boxSize = box.getSize(new THREE.Vector3())
     const maxDim = Math.max(boxSize.x, boxSize.y, boxSize.z)
     model.position.sub(center)
-    model.scale.setScalar(1.5 / maxDim)
+    // 正立宇航员适配圆形入口
+    model.scale.setScalar(1.4 / maxDim)
 
     scene.add(model)
   })
@@ -74,10 +75,11 @@ const init = () => {
 const animate = () => {
   animId = requestAnimationFrame(animate)
   if (model) {
-    rotY += props.warp ? 0.06 : 0.008
-    model.rotation.y = rotY
-    // 缓慢俯仰摆动
-    model.rotation.x = Math.sin(rotY * 0.3) * 0.12
+    // 宇航员左右轻摆，保持大致正面朝向观众；warp 时摆幅加大
+    t += props.warp ? 0.06 : 0.012
+    const amp = props.warp ? 0.9 : 0.22
+    model.rotation.y = Math.sin(t * 0.6) * amp
+    model.rotation.x = Math.sin(t * 0.3) * 0.05
   }
   renderer?.render(scene, camera)
 }

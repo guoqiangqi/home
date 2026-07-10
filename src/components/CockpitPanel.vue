@@ -32,6 +32,10 @@
           <div class="sg-led"></div>
           <span>SECTOR</span>
         </div>
+        <div class="sg-item eva" :class="{ on: props.state.evaActive }">
+          <div class="sg-led"></div>
+          <span>EVA</span>
+        </div>
       </div>
 
       <!-- 主操作：拆解 / 聚合 -->
@@ -252,7 +256,7 @@ $warn: #ffaa44;    // 橙
 // 状态指示灯网格
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 5px;
   margin-bottom: 10px;
 }

@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import StarshipModel from './StarshipModel.js'
 import ShieldEffect from './ShieldEffect.js'
 import LightingSystem from './LightingSystem.js'
+import AstronautModel from './AstronautModel.js'
 
 export default class StarshipExperience {
   constructor(canvas) {
@@ -35,7 +36,6 @@ export default class StarshipExperience {
     this._initControls()
     this._initLights()
     this._initStarfield()
-    this._initMouse()
     this._loadModel()
     this._startLoop()
     this._onResize = this._handleResize.bind(this)
@@ -97,21 +97,33 @@ export default class StarshipExperience {
     this.lighting = new LightingSystem(this.scene)
   }
 
-  _initMouse() {
-    this._mouse = new THREE.Vector2(9999, 9999)
-    this._onMouseMove = (e) => {
-      const rect = this.canvas.getBoundingClientRect()
-      this._mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
-      this._mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
-    }
-    this.canvas.addEventListener('mousemove', this._onMouseMove)
-  }
+
 
   _loadModel() {
+    let starshipProgress = 0
+    let astronautProgress = 0
+    let starshipReady = false
+    let astronautReady = false
+
+    const reportProgress = () => {
+      // 星舰加载占 70%，宇航员加载占 30%，使整体加载进度更平滑
+      const p = starshipProgress * 0.7 + astronautProgress * 0.3
+      this.onLoadProgress?.(p)
+    }
+
+    const tryComplete = () => {
+      if (!starshipReady || !astronautReady) return
+      this.onLoadComplete?.()
+    }
+
+    // 星舰模型加载
     this.model = new StarshipModel(this.scene, this.renderer, {
-      onProgress: (p) => this.onLoadProgress?.(p),
+      onProgress: (p) => {
+        starshipProgress = p
+        reportProgress()
+      },
       onReady: () => {
-        this.onLoadComplete?.()
+        starshipReady = true
         if (this.model.group) {
           const box = new THREE.Box3().setFromObject(this.model.group)
           const size = new THREE.Vector3()
@@ -124,6 +136,19 @@ export default class StarshipExperience {
         // 同步初始引擎状态（默认关闭）
         this.model?.setEngineOn(this.state.engineOn)
         this.lighting?.setEngineLights(this.state.engineOn)
+        tryComplete()
+      },
+    })
+
+    // 宇航员模型加载（作为星舰补充）
+    this.astronaut = new AstronautModel(this.scene, this.renderer, this.camera, {
+      onProgress: (p) => {
+        astronautProgress = p
+        reportProgress()
+      },
+      onReady: () => {
+        astronautReady = true
+        tryComplete()
       },
     })
   }
@@ -136,8 +161,14 @@ export default class StarshipExperience {
       const delta = clock.getDelta()
       const elapsed = clock.getElapsedTime()
 
-      this.controls.update()
+      // 同步 autoRotate 状态（防止其它路径误改），保证星舰自动旋转
+      if (this.controls) {
+        this.controls.autoRotate = this.state.autoRotate
+        this.controls.autoRotateSpeed = this.state.rotateSpeed
+        this.controls.update()
+      }
       this.model?.update(elapsed, delta)
+      this.astronaut?.update(elapsed, delta)
       this.shield?.update(elapsed)
       this.lighting?.update(elapsed)
 
@@ -161,7 +192,6 @@ export default class StarshipExperience {
   toggleExplode() {
     this.state.exploded = !this.state.exploded
     this.model?.setExploded(this.state.exploded)
-    this.particles?.setExploded(this.state.exploded)
     this.onStateChange?.('exploded', this.state.exploded)
   }
 
@@ -237,9 +267,10 @@ export default class StarshipExperience {
     this._disposed = true
     if (this._animId) cancelAnimationFrame(this._animId)
     window.removeEventListener('resize', this._onResize)
-    this.canvas.removeEventListener('mousemove', this._onMouseMove)
+    this.canvas.style.cursor = ''
     this.controls.dispose()
     this.model?.dispose()
+    this.astronaut?.dispose()
     this.shield?.dispose()
     this.lighting?.dispose()
     if (this._bgTexture) {

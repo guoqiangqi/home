@@ -33,7 +33,7 @@
     <Transition name="hint-fade">
       <div class="click-hint" v-if="loaded && !hintDismissed">
         <span class="hint-icon">◎</span>
-        <span>拖拽旋转 · 使用右侧面板控制拆解 / 聚合</span>
+        <span>拖拽旋转星舰 · 滚轮缩放</span>
         <button class="hint-close" @click="hintDismissed = true">×</button>
       </div>
     </Transition>
@@ -112,7 +112,7 @@ const shipState = reactive({
   engineOn: false,
   spotLightOn: false,
   autoRotate: true,
-  rotateSpeed: 0.3,
+  rotateSpeed: 0.2,
   lightColor: '#4ecdc4',
   lightIntensity: 1.5,
   ambientPreset: 'cruise',

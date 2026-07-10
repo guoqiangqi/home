@@ -140,14 +140,7 @@
       @mouseleave="onEggHover(false)"
       @click="onEggClick"
     >
-      <div class="sfe-glow-ring sfe-ring-1"></div>
-      <div class="sfe-glow-ring sfe-ring-2"></div>
       <StarshipMiniCanvas class="sfe-ship" :size="miniCanvasSize" :warp="easterEggWarping" />
-      <Transition name="signal-hint-fade">
-        <div class="sfe-hint" v-if="easterEggHovered && !easterEggWarping">
-          <span class="sh-text">进入星舰 · SECTOR-∞</span>
-        </div>
-      </Transition>
     </div>
   </Transition>
 </template>
@@ -621,35 +614,12 @@ onBeforeUnmount(() => {
   .sfe-ship {
     display: block;
     border-radius: 50%;
-    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.7)) drop-shadow(0 0 24px rgba(100, 160, 255, 0.35));
+    filter: drop-shadow(0 0 6px rgba(78, 205, 196, 0.3)) drop-shadow(0 0 14px rgba(100, 160, 255, 0.15));
     animation: shipFloat 4s ease-in-out infinite, shipFlicker 3.2s ease-in-out infinite;
     transform-origin: center;
     transition: filter 0.3s ease, transform 0.3s ease;
     pointer-events: none;
     user-select: none;
-  }
-
-  .sfe-glow-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    pointer-events: none;
-
-    &.sfe-ring-1 {
-      width: 72px;
-      height: 72px;
-      border: 1px solid rgba(78, 205, 196, 0.55);
-      box-shadow: 0 0 8px rgba(78, 205, 196, 0.2);
-      animation: sfeRingPulse 2.8s ease-out infinite;
-    }
-    &.sfe-ring-2 {
-      width: 100px;
-      height: 100px;
-      border: 1px solid rgba(126, 184, 255, 0.22);
-      animation: sfeRingPulse 2.8s ease-out infinite 0.9s;
-    }
   }
 
   .sfe-hint {
@@ -677,13 +647,13 @@ onBeforeUnmount(() => {
   }
 
   &:hover .sfe-ship, &.entry-active .sfe-ship {
-    filter: drop-shadow(0 0 18px rgba(78, 205, 196, 1)) drop-shadow(0 0 36px rgba(100, 180, 255, 0.5));
+    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.5)) drop-shadow(0 0 22px rgba(100, 180, 255, 0.25));
     transform: scale(1.12);
     animation: shipFloat 4s ease-in-out infinite;
   }
 
   &.entry-warp .sfe-ship {
-    filter: drop-shadow(0 0 28px rgba(78, 205, 196, 1)) drop-shadow(0 0 60px rgba(100, 180, 255, 0.8));
+    filter: drop-shadow(0 0 16px rgba(78, 205, 196, 0.6)) drop-shadow(0 0 34px rgba(100, 180, 255, 0.4));
     transform: scale(0.55) translateY(-24px);
     transition: filter 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -693,8 +663,6 @@ onBeforeUnmount(() => {
     right: 5vw;
     width: 54px;
     height: 54px;
-    .sfe-ring-1 { width: 54px; height: 54px; }
-    .sfe-ring-2 { width: 72px; height: 72px; }
   }
 }
 
@@ -706,15 +674,10 @@ onBeforeUnmount(() => {
 }
 
 @keyframes shipFlicker {
-  0%, 100% { opacity: 0.88; filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.7)) drop-shadow(0 0 24px rgba(100, 160, 255, 0.35)) brightness(1.05); }
-  25% { opacity: 1;    filter: drop-shadow(0 0 16px rgba(78, 205, 196, 0.9)) drop-shadow(0 0 32px rgba(100, 180, 255, 0.5)) brightness(1.15); }
-  50% { opacity: 0.78; filter: drop-shadow(0 0 6px rgba(78, 205, 196, 0.45)) drop-shadow(0 0 14px rgba(100, 140, 255, 0.2)) brightness(0.95); }
-  75% { opacity: 0.92; filter: drop-shadow(0 0 12px rgba(126, 184, 255, 0.7)) drop-shadow(0 0 28px rgba(78, 205, 196, 0.4)) brightness(1.1); }
-}
-
-@keyframes sfeRingPulse {
-  0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.7; }
-  100% { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+  0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 6px rgba(78, 205, 196, 0.3)) drop-shadow(0 0 14px rgba(100, 160, 255, 0.15)) brightness(1.02); }
+  25% { opacity: 1;    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.45)) drop-shadow(0 0 20px rgba(100, 180, 255, 0.22)) brightness(1.08); }
+  50% { opacity: 0.86; filter: drop-shadow(0 0 4px rgba(78, 205, 196, 0.2)) drop-shadow(0 0 10px rgba(100, 140, 255, 0.1)) brightness(0.98); }
+  75% { opacity: 0.95; filter: drop-shadow(0 0 8px rgba(126, 184, 255, 0.32)) drop-shadow(0 0 16px rgba(78, 205, 196, 0.2)) brightness(1.05); }
 }
 
 .sfe-fade-enter-active { transition: opacity 0.8s ease 0.4s, transform 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s; }

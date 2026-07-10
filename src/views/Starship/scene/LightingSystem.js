@@ -234,7 +234,7 @@ export default class LightingSystem {
   }
 
   dispose() {
-    ;[
+    [
       this.ambient, this.main, this.fill, this.rim, this.bottom,
       this.engineLight1, this.engineLight2, this.engineCore,
       this.shieldGlow, this.accentTop,
