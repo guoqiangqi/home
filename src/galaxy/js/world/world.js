@@ -5,6 +5,7 @@ import Experience from '../experience.js'
 import Environment from './environment.js'
 import Galaxy from './galaxy.js'
 import Planets from './planets.js'
+import Probe from './probe.js'
 
 export default class World {
   constructor() {
@@ -26,6 +27,9 @@ export default class World {
 
       // 创建三星系统
       this.planets = new Planets()
+
+      // 深空探测器：在三星系统内侧巡航
+      this.probe = new Probe()
 
       // 初始化镜头光晕效果
       this.lensFlare = new LensFlare()
@@ -73,6 +77,11 @@ export default class World {
     // 更新三星系统
     if (this.planets) {
       this.planets.update()
+    }
+
+    // 更新深空探测器
+    if (this.probe) {
+      this.probe.update()
     }
 
     // 更新 Lens Flare

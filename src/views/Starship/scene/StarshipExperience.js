@@ -36,7 +36,9 @@ export default class StarshipExperience {
     this._initControls()
     this._initLights()
     this._initStarfield()
+    this._initAstronautLayer()
     this._loadModel()
+    this._initAstronautDrag()
     this._startLoop()
     this._onResize = this._handleResize.bind(this)
     window.addEventListener('resize', this._onResize)
@@ -97,6 +99,21 @@ export default class StarshipExperience {
     this.lighting = new LightingSystem(this.scene)
   }
 
+  // 宇航员独立图层：独立场景 + 固定相机，与星舰 OrbitControls 完全解耦
+  _initAstronautLayer() {
+    this.astronautScene = new THREE.Scene()
+    this.astronautCamera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 50)
+    this.astronautCamera.position.set(0, 0, 5)
+    this.astronautCamera.lookAt(0, 0, 0)
+
+    // 图层专属灯光（overlay 场景无法复用主场景灯光）
+    const ambient = new THREE.AmbientLight(0xffffff, 0.55)
+    const key = new THREE.DirectionalLight(0xffffff, 1.6)
+    key.position.set(2, 3, 4)
+    const rim = new THREE.DirectionalLight(0x88ccff, 0.8)
+    rim.position.set(-3, 1, -2)
+    this.astronautScene.add(ambient, key, rim)
+  }
 
 
   _loadModel() {
@@ -140,8 +157,8 @@ export default class StarshipExperience {
       },
     })
 
-    // 宇航员模型加载（作为星舰补充）
-    this.astronaut = new AstronautModel(this.scene, this.renderer, this.camera, {
+    // 宇航员模型加载（独立图层，作为星舰补充）
+    this.astronaut = new AstronautModel(this.astronautScene, this.astronautCamera, {
       onProgress: (p) => {
         astronautProgress = p
         reportProgress()
@@ -151,6 +168,75 @@ export default class StarshipExperience {
         tryComplete()
       },
     })
+  }
+
+  // ─── 宇航员拖拽（捕获阶段拦截，避免触发星舰 OrbitControls）────────────
+
+  _initAstronautDrag() {
+    this._raycaster = new THREE.Raycaster()
+    this._pointerNDC = new THREE.Vector2()
+    this._dragging = false
+    this._dragOffset = new THREE.Vector3()
+    this._dragPoint = new THREE.Vector3()
+
+    this._onPointerDown = (e) => {
+      if (!this._hitAstronaut(e)) return
+      // 命中宇航员：拦截事件，OrbitControls 收不到，星舰保持不动
+      e.stopImmediatePropagation()
+      e.preventDefault()
+      this._dragging = true
+      this._pointerToPlane(e, this._dragPoint)
+      this._dragOffset.copy(this.astronaut.basePosition).sub(this._dragPoint)
+      this.canvas.style.cursor = 'grabbing'
+      this.canvas.setPointerCapture?.(e.pointerId)
+    }
+
+    this._onPointerMove = (e) => {
+      if (this._dragging) {
+        this._pointerToPlane(e, this._dragPoint)
+        this.astronaut?.setBasePosition(this._dragPoint.add(this._dragOffset))
+        return
+      }
+      // 悬停提示：指到宇航员时显示可抓取光标
+      this.canvas.style.cursor = this._hitAstronaut(e) ? 'grab' : ''
+    }
+
+    this._onPointerUp = (e) => {
+      if (!this._dragging) return
+      this._dragging = false
+      this.canvas.style.cursor = ''
+      this.canvas.releasePointerCapture?.(e.pointerId)
+    }
+
+    // capture: true 保证先于 OrbitControls 的监听器执行
+    this.canvas.addEventListener('pointerdown', this._onPointerDown, { capture: true })
+    this.canvas.addEventListener('pointermove', this._onPointerMove, { capture: true })
+    window.addEventListener('pointerup', this._onPointerUp, { capture: true })
+  }
+
+  _updatePointerNDC(e) {
+    const rect = this.canvas.getBoundingClientRect()
+    this._pointerNDC.set(
+      ((e.clientX - rect.left) / rect.width) * 2 - 1,
+      -((e.clientY - rect.top) / rect.height) * 2 + 1
+    )
+  }
+
+  _hitAstronaut(e) {
+    if (!this.astronaut?.group) return false
+    this._updatePointerNDC(e)
+    this._raycaster.setFromCamera(this._pointerNDC, this.astronautCamera)
+    return this._raycaster.intersectObject(this.astronaut.group, true).length > 0
+  }
+
+  // 将指针位置换算到宇航员所在的 z=0 平面（宇航员相机空间）
+  _pointerToPlane(e, out) {
+    this._updatePointerNDC(e)
+    this._raycaster.setFromCamera(this._pointerNDC, this.astronautCamera)
+    const { origin, direction } = this._raycaster.ray
+    const t = -origin.z / direction.z
+    out.copy(origin).addScaledVector(direction, t)
+    return out
   }
 
   _startLoop() {
@@ -172,7 +258,12 @@ export default class StarshipExperience {
       this.shield?.update(elapsed)
       this.lighting?.update(elapsed)
 
+      // 先渲染星舰主场景，再叠加渲染独立的宇航员图层
       this.renderer.render(this.scene, this.camera)
+      this.renderer.autoClear = false
+      this.renderer.clearDepth()
+      this.renderer.render(this.astronautScene, this.astronautCamera)
+      this.renderer.autoClear = true
     }
     loop()
   }
@@ -183,6 +274,8 @@ export default class StarshipExperience {
     const h = this.canvas.clientHeight
     this.camera.aspect = w / h
     this.camera.updateProjectionMatrix()
+    this.astronautCamera.aspect = w / h
+    this.astronautCamera.updateProjectionMatrix()
     this.renderer.setSize(w, h, false)
     this.shield?.syncPixelRatio(this.renderer)
   }
@@ -267,6 +360,9 @@ export default class StarshipExperience {
     this._disposed = true
     if (this._animId) cancelAnimationFrame(this._animId)
     window.removeEventListener('resize', this._onResize)
+    this.canvas.removeEventListener('pointerdown', this._onPointerDown, { capture: true })
+    this.canvas.removeEventListener('pointermove', this._onPointerMove, { capture: true })
+    window.removeEventListener('pointerup', this._onPointerUp, { capture: true })
     this.canvas.style.cursor = ''
     this.controls.dispose()
     this.model?.dispose()

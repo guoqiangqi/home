@@ -33,7 +33,7 @@
     <Transition name="hint-fade">
       <div class="click-hint" v-if="loaded && !hintDismissed">
         <span class="hint-icon">◎</span>
-        <span>拖拽旋转星舰 · 滚轮缩放</span>
+        <span>拖拽旋转星舰 · 滚轮缩放 · 可拖动宇航员</span>
         <button class="hint-close" @click="hintDismissed = true">×</button>
       </div>
     </Transition>

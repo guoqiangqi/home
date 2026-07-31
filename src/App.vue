@@ -614,10 +614,12 @@ onBeforeUnmount(() => {
   .sfe-ship {
     display: block;
     border-radius: 50%;
-    filter: drop-shadow(0 0 6px rgba(78, 205, 196, 0.3)) drop-shadow(0 0 14px rgba(100, 160, 255, 0.15));
-    animation: shipFloat 4s ease-in-out infinite, shipFlicker 3.2s ease-in-out infinite;
+    // 仅用极淡的中性阴影交代空间感，不再叠加霓虹辉光
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+    // 仅保留柔和的漂浮，移除闪烁脉冲动画
+    animation: shipFloat 5s ease-in-out infinite;
     transform-origin: center;
-    transition: filter 0.3s ease, transform 0.3s ease;
+    transition: filter 0.4s ease, transform 0.4s ease;
     pointer-events: none;
     user-select: none;
   }
@@ -647,13 +649,13 @@ onBeforeUnmount(() => {
   }
 
   &:hover .sfe-ship, &.entry-active .sfe-ship {
-    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.5)) drop-shadow(0 0 22px rgba(100, 180, 255, 0.25));
-    transform: scale(1.12);
-    animation: shipFloat 4s ease-in-out infinite;
+    // 悬停时只做很轻微的放大与阴影加深，不爆发霓虹光
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.42));
+    transform: scale(1.06);
   }
 
   &.entry-warp .sfe-ship {
-    filter: drop-shadow(0 0 16px rgba(78, 205, 196, 0.6)) drop-shadow(0 0 34px rgba(100, 180, 255, 0.4));
+    filter: drop-shadow(0 0 12px rgba(150, 190, 255, 0.35));
     transform: scale(0.55) translateY(-24px);
     transition: filter 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -671,13 +673,6 @@ onBeforeUnmount(() => {
   25% { transform: translateY(-7px) rotate(-5deg); }
   50% { transform: translateY(-12px) rotate(-8deg); }
   75% { transform: translateY(-7px) rotate(-11deg); }
-}
-
-@keyframes shipFlicker {
-  0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 6px rgba(78, 205, 196, 0.3)) drop-shadow(0 0 14px rgba(100, 160, 255, 0.15)) brightness(1.02); }
-  25% { opacity: 1;    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.45)) drop-shadow(0 0 20px rgba(100, 180, 255, 0.22)) brightness(1.08); }
-  50% { opacity: 0.86; filter: drop-shadow(0 0 4px rgba(78, 205, 196, 0.2)) drop-shadow(0 0 10px rgba(100, 140, 255, 0.1)) brightness(0.98); }
-  75% { opacity: 0.95; filter: drop-shadow(0 0 8px rgba(126, 184, 255, 0.32)) drop-shadow(0 0 16px rgba(78, 205, 196, 0.2)) brightness(1.05); }
 }
 
 .sfe-fade-enter-active { transition: opacity 0.8s ease 0.4s, transform 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s; }

@@ -16,6 +16,10 @@ const canvasRef = ref(null)
 
 let renderer, scene, camera, model, animId
 let t = 0
+// 基准位置（模型居中后的原点），供小范围漂浮叠加位移
+let basePos = new THREE.Vector3()
+// 基准朝向：稍微面向左侧
+const BASE_YAW = -0.5
 
 const init = () => {
   const canvas = canvasRef.value
@@ -26,7 +30,7 @@ const init = () => {
   renderer.setSize(s, s)
   renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.2
+  renderer.toneMappingExposure = 1.0
 
   scene = new THREE.Scene()
 
@@ -34,22 +38,22 @@ const init = () => {
   camera.position.set(0, 0.15, 2.4)
   camera.lookAt(0, 0.15, 0)
 
-  // 环境光
-  const ambient = new THREE.AmbientLight(0x4ecdc4, 0.6)
+  // 环境光：柔和的冷白，均匀铺底，避免整体染上高饱和青色
+  const ambient = new THREE.AmbientLight(0xbfd4e6, 0.6)
   scene.add(ambient)
 
-  // 主光源（模拟星空蓝白）
-  const keyLight = new THREE.DirectionalLight(0xc8e6ff, 1.8)
+  // 主光源（星白，自然照明）
+  const keyLight = new THREE.DirectionalLight(0xdcecff, 1.2)
   keyLight.position.set(2, 3, 3)
   scene.add(keyLight)
 
-  // 补光（暖色，底部）
-  const fillLight = new THREE.DirectionalLight(0xff9955, 0.5)
+  // 补光（极淡暖色，柔化背光面）
+  const fillLight = new THREE.DirectionalLight(0xffd8b8, 0.32)
   fillLight.position.set(-2, -1, 1)
   scene.add(fillLight)
 
-  // 边缘光（科幻青）
-  const rimLight = new THREE.DirectionalLight(0x4ecdc4, 1.2)
+  // 边缘光（收敛为淡冷白，仅勾勒轮廓，不做科幻高亮）
+  const rimLight = new THREE.DirectionalLight(0xaac8e6, 0.45)
   rimLight.position.set(-1, 2, -3)
   scene.add(rimLight)
 
@@ -65,6 +69,9 @@ const init = () => {
     model.position.sub(center)
     // 正立宇航员适配圆形入口
     model.scale.setScalar(1.4 / maxDim)
+    // 基准朝向稍向左侧，并记录居中后的基准位置
+    model.rotation.y = BASE_YAW
+    basePos.copy(model.position)
 
     scene.add(model)
   })
@@ -75,11 +82,23 @@ const init = () => {
 const animate = () => {
   animId = requestAnimationFrame(animate)
   if (model) {
-    // 宇航员左右轻摆，保持大致正面朝向观众；warp 时摆幅加大
-    t += props.warp ? 0.06 : 0.012
-    const amp = props.warp ? 0.9 : 0.22
-    model.rotation.y = Math.sin(t * 0.6) * amp
-    model.rotation.x = Math.sin(t * 0.3) * 0.05
+    if (props.warp) {
+      // warp 时：大幅摆动，回到基准位置
+      t += 0.06
+      model.rotation.y = BASE_YAW + Math.sin(t * 0.6) * 0.9
+      model.rotation.x = Math.sin(t * 0.3) * 0.05
+      model.rotation.z = 0
+      model.position.copy(basePos)
+    } else {
+      // 平时：保持稍面向左侧，在附近做小范围漂浮与轻微旋转
+      t += 0.01
+      model.rotation.y = BASE_YAW + Math.sin(t * 0.6) * 0.12
+      model.rotation.x = Math.sin(t * 0.45) * 0.05
+      model.rotation.z = Math.sin(t * 0.3) * 0.03
+      model.position.x = basePos.x + Math.sin(t * 0.5) * 0.06
+      model.position.y = basePos.y + Math.sin(t * 0.7 + 1.0) * 0.05
+      model.position.z = basePos.z + Math.sin(t * 0.4 + 2.0) * 0.03
+    }
   }
   renderer?.render(scene, camera)
 }
